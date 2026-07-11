@@ -1,0 +1,39 @@
+{
+  "name": "prop-dashboard-flenkenz",
+  "productName": "Prop Dashboard",
+  "version": "1.1.0",
+  "description": "Prop Dashboard by Flenkenz — Trading-Cockpit als Windows-Desktop-App",
+  "main": "main.js",
+  "author": "Flenkenz",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.flenkenz.prop-dashboard",
+    "productName": "Prop Dashboard",
+    "files": [
+      "main.js",
+      "index.html",
+      "package.json"
+    ],
+    "win": {
+      "target": ["portable", "nsis"]
+    },
+    "portable": {
+      "artifactName": "Prop-Dashboard-${version}-portable.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "artifactName": "Prop-Dashboard-Setup-${version}.exe"
+    }
+  }
+}

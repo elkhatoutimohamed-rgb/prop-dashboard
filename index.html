@@ -943,6 +943,8 @@ ccyFilter = settings.ccyFilter || "ALL";
 let armed = null;
 let evData = {};
 let lastTickSecond = -1;
+let firmStateEls = {};      /* gecachte data-firmstate-Refs, neu befüllt bei jedem renderCockpit() */
+let cachedThresholds = [];  /* gecachte alertThresholds(), neu berechnet bei arm/disarm/Firmen-Toggle */
 let impFilter = "HIGH";
 impFilter = (settings.impFilter === "HM") ? "HM" : "HIGH";
 let tlMode = (settings.tlMode === "week") ? "week" : "24h";
@@ -1022,22 +1024,26 @@ const SESSIONS = [
   {id:"LDN", tz:"Europe/London",     o:8, c:17},
   {id:"NY",  tz:"America/New_York",  o:8, c:17}
 ];
+/* DOM-Refs einmalig cachen statt bei jedem 1s-Tick per querySelector zu suchen (läuft dauerhaft im Hintergrund) */
+SESSIONS.forEach(s => {
+  s.el = document.querySelector('.sess[data-sess="'+s.id+'"]');
+  s.timeEl = document.querySelector('[data-sesstime="'+s.id+'"]');
+  s.progEl = document.querySelector('[data-sessprog="'+s.id+'"]');
+});
 const sessFmt = {};
 function fmtHM(mins){ const h = Math.floor(mins/60), m = mins%60; return (h>0 ? h+"h " : "") + String(m).padStart(2,"0") + "m"; }
 function renderSessions(nowDate){
   for(const s of SESSIONS){
+    if(!s.el || !s.timeEl) continue;
     const f = sessFmt[s.tz] || (sessFmt[s.tz] = new Intl.DateTimeFormat("en-GB",{timeZone:s.tz,hour:"2-digit",minute:"2-digit",weekday:"short",hour12:false,hourCycle:"h23"}));
     let h=0,m=0,wd="";
     for(const p of f.formatToParts(nowDate)){ if(p.type==="hour")h=+p.value; else if(p.type==="minute")m=+p.value; else if(p.type==="weekday")wd=p.value; }
     const cur=h*60+m, o=s.o*60, c=s.c*60;
-    const el = document.querySelector('.sess[data-sess="'+s.id+'"]');
-    const tEl = document.querySelector('[data-sesstime="'+s.id+'"]');
-    if(!el || !tEl) continue;
-    if(wd==="Sat" || wd==="Sun" || (wd==="Fri" && cur>=c)){ el.classList.remove("open"); tEl.textContent = "Weekend"; setProg(s.id,0); continue; }
-    if(cur>=o && cur<c){ el.classList.add("open"); tEl.textContent = "⏵ " + fmtHM(c-cur); setProg(s.id, (cur-o)/(c-o)); }
-    else{ el.classList.remove("open"); const until = cur<o ? o-cur : (1440-cur)+o; tEl.textContent = "in " + fmtHM(until); setProg(s.id,0); }
+    const setProg = frac => { if(s.progEl) s.progEl.style.width = Math.round(Math.max(0,Math.min(1,frac))*100) + "%"; };
+    if(wd==="Sat" || wd==="Sun" || (wd==="Fri" && cur>=c)){ s.el.classList.remove("open"); s.timeEl.textContent = "Weekend"; setProg(0); continue; }
+    if(cur>=o && cur<c){ s.el.classList.add("open"); s.timeEl.textContent = "⏵ " + fmtHM(c-cur); setProg((cur-o)/(c-o)); }
+    else{ s.el.classList.remove("open"); const until = cur<o ? o-cur : (1440-cur)+o; s.timeEl.textContent = "in " + fmtHM(until); setProg(0); }
   }
-  function setProg(id,frac){ const p = document.querySelector('[data-sessprog="'+id+'"]'); if(p) p.style.width = Math.round(Math.max(0,Math.min(1,frac))*100) + "%"; }
 }
 
 /* ---------- Audio ---------- */
@@ -1161,6 +1167,7 @@ function arm(ts, country){
     firedAlerts: {},
     lastPhase: null
   };
+  refreshThresholds();
   syncFired();
   armed.lastPhase = phaseOf(Date.now());
   evData = normBias(store.get("wr:ev:" + key) || { checks:{}, scen:{} });
@@ -1177,6 +1184,7 @@ function arm(ts, country){
 function disarm(silent){
   if(armed) store.del("wr:armed");
   armed = null; evData = {};
+  refreshThresholds();
   if(!silent) SND.ping();
   renderEvents();
   renderTimeline();
@@ -1196,7 +1204,7 @@ function normBias(d){
   return d;
 }
 
-function alertThresholds(){
+function computeAlertThresholds(){
   if(!armed) return [];
   const ts = armed.ts, wOut = outerWinMin()*60000, wIn = innerWinMin()*60000;
   const list = [
@@ -1213,10 +1221,13 @@ function alertThresholds(){
   }
   return list.sort((a,b)=>a.at-b.at);
 }
+/* Schwellen hängen nur von armed.ts + aktiven Firmen ab → nicht bei jedem 1s-Tick neu berechnen,
+   sondern nur wenn sich einer der beiden tatsächlich ändert (arm/disarm/Firmen-Toggle/Hydration). */
+function refreshThresholds(){ cachedThresholds = armed ? computeAlertThresholds() : []; }
 function syncFired(){
   if(!armed) return;
   const now = Date.now();
-  alertThresholds().forEach(t => { if(t.at <= now) armed.firedAlerts[t.id] = true; });
+  cachedThresholds.forEach(t => { if(t.at <= now) armed.firedAlerts[t.id] = true; });
 }
 
 /* ---------- Cockpit ---------- */
@@ -1258,6 +1269,7 @@ function renderCockpit(){
       }).join("") + '</div>';
     }
     body.innerHTML = '<div class="arm-idle">' + hero + qa + '</div>';
+    firmStateEls = {};
     setPhaseBadge("IDLE");
     wireCockpit();
     return;
@@ -1332,6 +1344,8 @@ function renderCockpit(){
     + '<div class="check-head"><span class="ch-label">Szenarien</span><span></span><button id="btn-disarm" class="danger">✕ Fokus beenden</button></div>'
     + '<div class="scen-grid">' + sc + '</div>';
 
+  firmStateEls = {};
+  FIRMS.forEach(fm => { firmStateEls[fm.id] = document.querySelector('[data-firmstate="' + fm.id + '"]'); });
   updateChecklistProgress();
   wireCockpit();
 }
@@ -1344,6 +1358,7 @@ function wireCockpit(){
     armed.firms[id] = !armed.firms[id];
     settings.firms = {...armed.firms};
     store.set("wr:settings", settings);
+    refreshThresholds();
     syncFired();
     armed.lastPhase = phaseOf(Date.now());
     persistArmed();
@@ -1379,8 +1394,9 @@ function updateChecklistProgress(){
   el.classList.toggle("ok", done >= total && total > 0);
 }
 
+const phaseBadgeEl = document.getElementById("phase-badge");
 function setPhaseBadge(ph){
-  const el = document.getElementById("phase-badge");
+  const el = phaseBadgeEl;
   const map = {IDLE:"ph-idle",PREP:"ph-prep",FINAL:"ph-final",LOCKED:"ph-locked",LIVE:"ph-live",CLEARED:"ph-cleared"};
   const lbl = {PREP:"Prep",FINAL:"Final Check",LOCKED:"Locked",LIVE:"Live",CLEARED:"Cleared"};
   if(ph === "IDLE"){ el.style.display = "none"; }
@@ -1549,7 +1565,6 @@ function renderTimeline(){
   }
   html += '<span class="tl-now" style="left:' + pos(now).toFixed(3) + '%"><b>NOW</b></span>';
   el.innerHTML = html;
-  el.querySelectorAll("[data-tlts]").forEach(b => b.addEventListener("click", () => arm(parseInt(b.dataset.tlts,10), b.dataset.tlccy)));
 }
 
 /* ---------- FF-Liste ---------- */
@@ -1608,19 +1623,15 @@ function renderEvents(){
   }
   wrap.innerHTML = html;
   wrap.scrollTop = keepScroll;
-  wrap.querySelectorAll("[data-arm-ts]").forEach(b => b.addEventListener("click", () => arm(parseInt(b.dataset.armTs,10), b.dataset.armCcy)));
-  wrap.querySelectorAll("[data-ov]").forEach(b => b.addEventListener("click", () => {
-    const k = b.dataset.ov;
-    const ev = events.find(x => ovKey(x) === k);
-    if(ev) toggleOverride(ev);
-  }));
 }
 
 /* ---------- Tick ---------- */
+const clockDeEl = document.getElementById("clock-de");
 function tick(){
   const now = Date.now();
-  document.getElementById("clock-de").textContent = fmtClockDE.format(new Date());
-  renderSessions(new Date());
+  const nowDate = new Date(now);
+  clockDeEl.textContent = fmtClockDE.format(nowDate);
+  renderSessions(nowDate);
   if(!armed){
     setPhaseBadge("IDLE");
     const cc = document.getElementById("cc-count");
@@ -1645,7 +1656,7 @@ function tick(){
 
   if(now > ts + wOut + AUTO_DISARM_AFTER_MS){ disarm(true); return; }
 
-  for(const t of alertThresholds()){
+  for(const t of cachedThresholds){
     if(!armed.firedAlerts[t.id] && now >= t.at){
       armed.firedAlerts[t.id] = true;
       if(SND[t.snd]) SND[t.snd]();
@@ -1687,7 +1698,7 @@ function tick(){
   }
 
   FIRMS.forEach(fm => {
-    const el = document.querySelector('[data-firmstate="' + fm.id + '"]');
+    const el = firmStateEls[fm.id];
     if(!el) return;
     if(!armed.firms[fm.id]){ el.className = "fc-state st-off"; el.textContent = "Aus"; return; }
     const w = fm.win*60000, start = ts - w, end = ts + w;
@@ -1765,6 +1776,20 @@ document.querySelectorAll(".tl-mode").forEach(b => b.addEventListener("click", (
   renderTimeline();
 }));
 document.querySelectorAll(".tl-mode").forEach(b => b.classList.toggle("active", b.dataset.tlmode === tlMode));
+/* Event-Delegation statt Re-Bind bei jedem renderEvents()/renderTimeline() (läuft alle 60s + bei jedem Feed-Reload) */
+document.getElementById("event-list").addEventListener("click", (e) => {
+  const armBtn = e.target.closest("[data-arm-ts]");
+  if(armBtn){ arm(parseInt(armBtn.dataset.armTs,10), armBtn.dataset.armCcy); return; }
+  const ovBtn = e.target.closest("[data-ov]");
+  if(ovBtn){
+    const ev = events.find(x => ovKey(x) === ovBtn.dataset.ov);
+    if(ev) toggleOverride(ev);
+  }
+});
+document.getElementById("tl-bar").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-tlts]");
+  if(b) arm(parseInt(b.dataset.tlts,10), b.dataset.tlccy);
+});
 document.getElementById("btn-ff-win").addEventListener("click", () => {
   window.open("https://www.forexfactory.com/calendar","ffwin","width=1180,height=920");
 });
@@ -1815,6 +1840,7 @@ document.getElementById("btn-refresh").addEventListener("keydown", (e) => { if(e
     armed = a;
     armed.lastPhase = null;
     evData = normBias(store.get("wr:ev:" + a.key) || { checks:{}, scen:{} });
+    refreshThresholds();
     syncFired();
     armed.lastPhase = phaseOf(Date.now());
   }else if(a){

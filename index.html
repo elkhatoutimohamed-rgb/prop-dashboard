@@ -558,10 +558,10 @@
     <div class="rule-card soft">
       <button class="rc-chevron" aria-expanded="false" aria-label="Details ein-/ausklappen">⌄</button>
       <div class="rc-head">Alpha Capital</div>
-      <div class="rc-win">±2–5 Minuten · Alpha Pro</div>
+      <div class="rc-win">±2 Minuten · Alpha Pro (8/10)</div>
       <span class="rc-tag">Soft Breach</span>
       <div class="rc-body">
-        <b>Pro 8% / 10%:</b> ±2 Min · <b>Pro 6%:</b> ±5 Min.<br>
+        <b>Pro 8% / 10%:</b> ±2 Min.<br>
         Profite nicht Performance-Fee-fähig — <span class="hl">auch bei SL/TP-Trigger im Fenster.</span>
         Mindesthaltedauer 2 Min auf allen Trades. <b>Eval:</b> frei.
       </div>
@@ -640,7 +640,7 @@
           <td class="t-firm">The5ers<span>High Stakes</span></td>
           <td>Equity</td>
           <td class="c-bad">5%</td>
-          <td class="c-warn">4%<span class="t-sub">funded</span></td>
+          <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>3</td>
           <td class="c-good">Ja</td>
@@ -649,8 +649,8 @@
         <tr>
           <td class="t-firm">Alpha Capital<span>Alpha Pro &middot; 2-Step</span></td>
           <td>Balance</td>
-          <td class="c-bad">3 / 4 / 5%<span class="t-sub">Pro 6 / 8 / 10</span></td>
-          <td class="c-warn">6 / 8 / 10%<span class="t-sub">static</span></td>
+          <td class="c-bad">4 / 5%<span class="t-sub">Pro 8 / 10</span></td>
+          <td class="c-bad">8 / 10%<span class="t-sub">static</span></td>
           <td class="c-warn">40%<span class="t-sub">nur On-Demand</span></td>
           <td>3</td>
           <td class="c-bad">Nein</td>
@@ -658,9 +658,9 @@
         </tr>
         <tr>
           <td class="t-firm">FundingPips<span>2-Step Flex</span></td>
-          <td>Equity</td>
-          <td class="c-good">Keins</td>
-          <td class="c-good">12%<span class="t-sub">static</span></td>
+          <td>H&ouml;herer Wert<span class="t-sub">Equity/Balance</span></td>
+          <td class="c-bad">4%</td>
+          <td class="c-bad">12%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>0<span class="t-sub">4 bei 60%-Regel</span></td>
           <td class="c-bad">Nein<span class="t-sub">seit 29.01.26</span></td>
@@ -670,7 +670,7 @@
           <td class="t-firm">FundedNext<span>Stellar 2-Step</span></td>
           <td>Balance</td>
           <td class="c-bad">5%</td>
-          <td class="c-warn">10%<span class="t-sub">static</span></td>
+          <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>5</td>
           <td class="c-bad">Nein</td>
@@ -682,7 +682,9 @@
 
   <div class="rules-note" style="margin:6px 22px 22px">
     <b>Equity</b> = floating Verluste z&auml;hlen sofort &middot; <b>Balance</b> = nur geschlossene Trades.
+    <b>FundingPips</b>: es z&auml;hlt der jeweils h&ouml;here Wert aus Equity und (Opening-)Balance &mdash; h&auml;lt man z.B. einen Trade &uuml;ber Nacht im Minus, greift zu dem Zeitpunkt die (h&ouml;here) Balance statt der Equity.
     FundedNext: Gold-Leverage seit Jan 2026 auf 1:10.
+    <b>Daily/Max</b> sind harte Limits &mdash; jede &Uuml;berschreitung ist ein Breach, daher einheitlich rot markiert statt nach H&ouml;he bewertet.
     <b>Risk/Trade</b> = Richtwerte, u.a. aus eigener Recherche &mdash; bei FTMO (informelles High-Risk-Flag) und ACG/5ers (abh&auml;ngig vom Restriktionsstatus) im Zweifel Support fragen.
     Vor Payout offizielle FAQ pr&uuml;fen.
   </div>

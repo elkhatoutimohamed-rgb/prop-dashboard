@@ -191,12 +191,13 @@
   .chart-box .tradingview-widget-container{position:absolute;inset:0}
 
   /* ---------- NÄCHSTES RED FOLDER ---------- */
+  #next-event-card .card-head h2 .dot{background:linear-gradient(135deg,var(--red),#FF8A80);box-shadow:0 0 12px rgba(255,69,58,.8)}
   .ne-box{padding:22px 20px;border-radius:var(--r-md);text-align:center;
-    background:linear-gradient(160deg,rgba(245,183,0,.1),rgba(255,255,255,.02));border:1px solid rgba(245,183,0,.28)}
+    background:linear-gradient(160deg,rgba(255,69,58,.1),rgba(255,255,255,.02));border:1px solid rgba(255,69,58,.28)}
   .ne-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .ne-title{font-family:var(--head);font-weight:700;font-size:clamp(1rem,2.4vw,1.35rem);line-height:1.2}
-  .ne-count{font-family:var(--mono);font-weight:700;font-size:clamp(1.5rem,5.6vw,2.6rem);letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.15;margin-bottom:10px;
-    background:linear-gradient(90deg,#fff,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ne-count{font-family:var(--mono);font-weight:700;font-size:clamp(.95rem,3.8vw,1.6rem);letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.25;margin-bottom:10px;
+    background:linear-gradient(90deg,#fff,#FF8A80);-webkit-background-clip:text;background-clip:text;color:transparent}
   .ne-when{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
   .ne-empty{font-size:.82rem;color:var(--muted);line-height:1.7;padding:8px 0}
 
@@ -422,7 +423,7 @@
 </section>
 
 <!-- ================= NÄCHSTES RED FOLDER ================= -->
-<section class="card mb rv" style="animation-delay:.24s">
+<section class="card mb rv" id="next-event-card" style="animation-delay:.24s">
   <div class="card-head">
     <h2><span class="dot"></span>Nächstes Red Folder</h2>
     <span class="hint">Inkl. deiner Myfxbook-Hochstufungen (↑ Rot)</span>

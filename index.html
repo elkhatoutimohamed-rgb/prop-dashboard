@@ -306,11 +306,6 @@
   .c-warn{color:#FFC66B!important}
   .c-bad{color:#FF9C94!important}
   .c-good .t-sub,.c-warn .t-sub,.c-bad .t-sub{color:var(--muted)}
-  .dd-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.03em;padding:4px 11px;border-radius:999px;white-space:nowrap;line-height:1.4}
-  .dd-tag.eq{color:#FF9C94;background:rgba(255,69,58,.14);border:1px solid rgba(255,69,58,.4)}
-  .dd-tag.bal{color:#7FF0B2;background:rgba(48,217,123,.12);border:1px solid rgba(48,217,123,.35)}
-  .dd-tag.mix{color:#FFC66B;background:rgba(255,159,28,.13);border:1px solid rgba(255,159,28,.4)}
-  .dd-tag.unk{color:var(--muted);background:var(--glass2);border:1px solid var(--stroke2)}
   .radar-flags{display:flex;flex-direction:column;gap:8px;padding:10px 22px 16px}
   .flag-item{font-size:.7rem;line-height:1.6;color:var(--muted);padding:11px 14px;border-radius:var(--r-sm);
     background:var(--glass);border-left:2px solid var(--stroke2)}
@@ -361,7 +356,7 @@
     <div class="logo-mark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1A1205" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 6-8"/><path d="M18 6h2.5V8.5"/></svg></div>
     <div>
       <h1>Prop <span>Dashboard</span></h1>
-      <small>by Flenkenz · Trading Cockpit</small>
+      <small>by Flenkenz</small>
     </div>
   </div>
   <div class="clocks">
@@ -632,7 +627,7 @@
       <tbody>
         <tr>
           <td class="t-firm">FTMO<span>Standard</span></td>
-          <td><span class="dd-tag eq">Equity</span></td>
+          <td>Equity</td>
           <td class="c-bad">5%</td>
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
@@ -642,7 +637,7 @@
         </tr>
         <tr>
           <td class="t-firm">The5ers<span>High Stakes</span></td>
-          <td><span class="dd-tag eq">Equity</span></td>
+          <td>Equity</td>
           <td class="c-bad">5%</td>
           <td class="c-warn">4%<span class="t-sub">funded</span></td>
           <td class="c-good">&mdash;</td>
@@ -652,7 +647,7 @@
         </tr>
         <tr>
           <td class="t-firm">Alpha Capital<span>Alpha Pro &middot; 2-Step</span></td>
-          <td><span class="dd-tag bal">Balance</span></td>
+          <td>Balance</td>
           <td class="c-bad">3 / 4 / 5%<span class="t-sub">Pro 6 / 8 / 10</span></td>
           <td class="c-warn">6 / 8 / 10%<span class="t-sub">static</span></td>
           <td class="c-warn">40%<span class="t-sub">nur On-Demand</span></td>
@@ -662,7 +657,7 @@
         </tr>
         <tr>
           <td class="t-firm">FundingPips<span>2-Step Flex</span></td>
-          <td><span class="dd-tag eq">Equity</span></td>
+          <td>Equity</td>
           <td class="c-good">Keins</td>
           <td class="c-good">12%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
@@ -672,7 +667,7 @@
         </tr>
         <tr>
           <td class="t-firm">FundedNext<span>Stellar 2-Step</span></td>
-          <td><span class="dd-tag bal">Balance</span></td>
+          <td>Balance</td>
           <td class="c-bad">5%</td>
           <td class="c-warn">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
@@ -763,8 +758,8 @@ function fmtCountdown(ms){
   const s = Math.floor(ms/1000);
   const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
   if(h >= 24){
-    const d = Math.floor(h/24);
-    return d + (d === 1 ? " Tag " : " Tage ") + pad(h%24) + ":" + pad(m) + ":" + pad(sec);
+    const d = Math.floor(h/24), rh = h%24;
+    return d + (d === 1 ? " Tag " : " Tage ") + rh + " Std " + m + " Min";
   }
   return pad(h) + ":" + pad(m) + ":" + pad(sec);
 }

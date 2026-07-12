@@ -43,6 +43,11 @@ function createWindow() {
   Menu.setApplicationMenu(null);
   win.loadFile(path.join(__dirname, "index.html"));
 
+  // Renderer-Konsole (inkl. JS-Fehler) im Terminal sichtbar machen, hilfreich beim Entwickeln
+  win.webContents.on("console-message", (e, level, message, line, sourceId) => {
+    if (level >= 2) console.log("[renderer]", message, "(" + sourceId + ":" + line + ")");
+  });
+
   // FF-Fenster / Myfxbook-Fenster / PJ-Fenster als Kind-Fenster,
   // alles andere (FAQ-Links etc.) im Standard-Browser
   win.webContents.setWindowOpenHandler(({ url }) => {

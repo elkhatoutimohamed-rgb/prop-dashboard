@@ -1,4 +1,4 @@
-# Prop Dashboard — Windows-App bauen (v1.1)
+# Prop Dashboard — Windows-App bauen (v1.2)
 
 ## Einmalig: Voraussetzung
 Node.js LTS installieren: https://nodejs.org (Standard-Installer, alles auf Weiter).
@@ -12,8 +12,8 @@ Rechtsklick im Ordner → „In Terminal öffnen", dann:
 
 Fertig. Im Unterordner `dist\` liegen dann:
 
-- **Prop-Dashboard-1.1.0-portable.exe** — einfach doppelklicken, keine Installation
-- **Prop-Dashboard-Setup-1.1.0.exe** — klassischer Installer mit Desktop-Icon
+- **Prop-Dashboard-1.2.0-portable.exe** — einfach doppelklicken, keine Installation
+- **Prop-Dashboard-Setup-1.2.0.exe** — klassischer Installer mit Desktop-Icon
 
 ## Zum schnellen Testen ohne Build
     npm start
@@ -25,12 +25,19 @@ Ordner kopieren (überschreiben) → `npm run dist`. Kein `npm install` nötig.
 
 ## Was die App gegenüber dem Browser kann
 - **Strg+Alt+T** → Always-on-top an/aus (📌 in der Titelleiste)
-- Alarme feuern **sekundengenau**, auch minimiert (Browser drosselt Hintergrund-Tabs)
 - **Payoutjunction ist direkt eingebettet** (unter der Link-Karte) — der
   X-Frame-Header wird von der App entfernt. Im normalen Browser bleibt die
   Sektion unverändert (Fenster-Button).
 - FF-Fenster / Myfxbook-Fenster / PJ-Fenster öffnen als echte Kind-Fenster,
   FAQ-Links gehen in deinen Standard-Browser
+
+## Neu in v1.2
+- **Fokus/Armed-Mode + Alarme komplett entfernt** — die App ist jetzt ein reines
+  Überblicks-Dashboard (Kalender, Chart, Regeln, Payouts), kein Countdown/Checklisten/
+  Sound-System mehr
+- Regel-Radar: „Equity"-Badge-Overflow gefixt (Text ragte aus dem roten Kasten)
+- PWA-Grundlage: `manifest.json` + App-Icons + iOS-Meta-Tags, damit sich das
+  Dashboard auf dem iPhone über Safari „Zum Home-Bildschirm" wie eine App installieren lässt
 
 ## Neu in v1.1 (Dashboard-Stand 11.07.2026)
 - Zeitstrahl umschaltbar **24h / Woche** (FF-Woche So–Sa), vergangene Events
@@ -43,7 +50,7 @@ Ordner kopieren (überschreiben) → `npm run dist`. Kein `npm install` nötig.
 ## Hinweise
 - Windows SmartScreen meckert beim ersten Start der .exe (unsigniert):
   „Weitere Informationen" → „Trotzdem ausführen". Normal bei selbstgebauten Apps.
-- localStorage (Overrides, Settings, Checklisten) lebt in der App getrennt
-  vom Browser — Einstellungen wandern nicht automatisch mit.
+- localStorage (Myfxbook-Overrides, Filter-Einstellungen) lebt in der App
+  getrennt vom Browser — Einstellungen wandern nicht automatisch mit.
 - Dashboard später aktualisieren: neue HTML einfach als `index.html` in den
   Ordner legen und `npm run dist` erneut ausführen (`npm start` zum Testen).

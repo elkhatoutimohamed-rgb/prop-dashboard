@@ -1,8 +1,8 @@
 {
   "name": "prop-dashboard-flenkenz",
   "productName": "Prop Dashboard",
-  "version": "1.1.0",
-  "description": "Prop Dashboard by Flenkenz — Trading-Cockpit als Windows-Desktop-App",
+  "version": "1.2.0",
+  "description": "Prop Dashboard by Flenkenz — Trading-Dashboard als Windows-Desktop-App / PWA",
   "main": "main.js",
   "author": "Flenkenz",
   "license": "UNLICENSED",
@@ -21,6 +21,8 @@
     "files": [
       "main.js",
       "index.html",
+      "manifest.json",
+      "icons/**/*",
       "package.json"
     ],
     "win": {

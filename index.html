@@ -2,8 +2,19 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Prop Dashboard by Flenkenz</title>
+
+<!-- PWA / iPhone-Home-Bildschirm -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#08080D">
+<link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prop Dashboard">
+<meta name="mobile-web-app-capable" content="yes">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -53,11 +64,6 @@
   @keyframes drift1{to{transform:translate(120px,90px) scale(1.15)}}
   @keyframes drift2{to{transform:translate(-140px,60px) scale(1.1)}}
   @keyframes drift3{to{transform:translate(80px,-110px) scale(1.2)}}
-  body[data-phase="LOCKED"] .aurora.a3,body[data-phase="LIVE"] .aurora.a3{background:radial-gradient(circle,rgba(255,69,58,.34),transparent 65%);opacity:.85}
-  #edge-glow{position:fixed;inset:0;pointer-events:none;z-index:55;opacity:0;transition:opacity .8s;
-    box-shadow:inset 0 0 140px 30px rgba(255,69,58,.28)}
-  body[data-phase="LOCKED"] #edge-glow,body[data-phase="LIVE"] #edge-glow{opacity:1;animation:edgePulse 1.6s ease-in-out infinite}
-  @keyframes edgePulse{50%{opacity:.55}}
 
   main,header,.ticker{position:relative;z-index:1}
 
@@ -128,33 +134,6 @@
   .sess.open .s-time{color:#9BF2C0}
   .s-prog{position:absolute;left:0;bottom:0;height:2px;width:0;background:linear-gradient(90deg,var(--green),#5CE79B);transition:width 1s linear;opacity:0}
   .sess.open .s-prog{opacity:1}
-  /* Gear-Menü */
-  .gear-wrap{position:relative}
-  #gear-btn{padding:8px 12px;font-size:1rem;line-height:1}
-  .gear-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:250px;padding:14px;
-    background:rgba(18,18,24,.97);border:1px solid var(--stroke2);border-radius:var(--r-md);
-    box-shadow:0 20px 50px rgba(0,0,0,.6);backdrop-filter:blur(20px);
-    opacity:0;pointer-events:none;transform:translateY(-8px) scale(.97);transition:all .22s var(--ease)}
-  .gear-menu.open{opacity:1;pointer-events:auto;transform:none}
-  .gm-title{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-  .gm-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:.82rem;cursor:pointer}
-  .gm-row input{position:absolute;opacity:0;pointer-events:none}
-  .gm-row .sw{width:38px;height:22px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid var(--stroke2);position:relative;transition:all .25s var(--ease);flex:none}
-  .gm-row .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#C9C9D4;transition:all .25s var(--ease)}
-  .gm-row input:checked + .sw{background:linear-gradient(135deg,var(--gold),var(--amber));border-color:transparent}
-  .gm-row input:checked + .sw::after{left:18px;background:#1A1205}
-  .gm-test{width:100%;margin-top:6px;padding:9px;font-size:.72rem}
-  .gm-hint{font-size:.64rem;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--stroke)}
-  /* Command Center Hero */
-  .cc-hero{padding:20px;border-radius:var(--r-md);background:linear-gradient(160deg,rgba(245,183,0,.1),rgba(255,255,255,.02));border:1px solid rgba(245,183,0,.28);text-align:center;margin-bottom:16px}
-  .cc-hero-label{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);margin-bottom:12px}
-  .cc-hero-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .cc-hero-title{font-family:var(--head);font-weight:700;font-size:clamp(1rem,2.4vw,1.35rem);line-height:1.2}
-  .cc-hero-count{font-family:var(--mono);font-weight:700;font-size:clamp(2.4rem,7vw,3.4rem);letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:10px;
-    background:linear-gradient(90deg,#fff,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .cc-hero-when{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-bottom:16px}
-  .cc-hero-arm{font-size:.86rem;padding:12px 26px}
-  .cc-next-label{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:6px 0 10px}
   .clock{padding:8px 16px;border-radius:var(--r-md);background:var(--glass);border:1px solid var(--stroke);text-align:center;min-width:112px}
   .clock .cl-label{font-size:.58rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;font-weight:600}
   .clock .cl-time{font-family:var(--mono);font-weight:600;font-size:1.12rem;font-variant-numeric:tabular-nums;margin-top:1px}
@@ -176,8 +155,6 @@
   @keyframes softPulse{50%{opacity:.55}}
 
   /* ---------- LAYOUT ---------- */
-  .cockpit-grid{display:grid;grid-template-columns:minmax(400px,1.12fr) minmax(380px,1fr);gap:24px;margin-bottom:26px;align-items:start}
-  @media(max-width:1140px){.cockpit-grid{grid-template-columns:1fr}}
   .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:26px;align-items:start}
   @media(max-width:980px){.grid{grid-template-columns:1fr}}
   .mb{margin-bottom:26px}
@@ -190,130 +167,6 @@
     background:linear-gradient(135deg,rgba(255,159,28,.14),rgba(255,159,28,.05));
     border:1px solid rgba(255,159,28,.4);color:#FFC66B;font-size:.78rem;line-height:1.65}
   .banner b{color:var(--ink)}
-
-  /* ---------- COCKPIT ---------- */
-  #cockpit{border-color:rgba(255,255,255,.1)}
-  body[data-phase="LOCKED"] #cockpit,body[data-phase="LIVE"] #cockpit{border-color:rgba(255,69,58,.45);box-shadow:0 22px 60px rgba(0,0,0,.45),0 0 46px rgba(255,69,58,.22), inset 0 1px 0 rgba(255,255,255,.07)}
-  .phase-badge{font-family:var(--head);font-weight:700;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;
-    padding:7px 16px;border-radius:999px;border:1px solid var(--stroke2);transition:all .4s}
-  .ph-idle{color:var(--muted);background:var(--glass)}
-  .ph-prep{color:var(--ink);background:var(--glass2)}
-  .ph-final{color:#3A2B00;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;box-shadow:0 0 22px rgba(245,183,0,.5)}
-  .ph-locked{color:#fff;background:linear-gradient(135deg,#FF6157,var(--red));border:none;box-shadow:0 0 26px rgba(255,69,58,.6);animation:softPulse 1.2s ease-in-out infinite}
-  .ph-live{color:var(--red);background:#fff;border:none;box-shadow:0 0 30px rgba(255,255,255,.5);animation:softPulse .9s ease-in-out infinite}
-  .ph-cleared{color:#06341B;background:linear-gradient(135deg,#5CE79B,var(--green));border:none;box-shadow:0 0 22px rgba(48,217,123,.5)}
-  .toggles{display:flex;gap:8px;flex-wrap:wrap}
-  .toggles button{padding:7px 13px;font-size:.68rem;display:inline-flex;align-items:center;gap:7px}
-  .toggles button.on{background:linear-gradient(135deg,rgba(48,217,123,.25),rgba(48,217,123,.1));border-color:rgba(48,217,123,.55);color:#7FF0B2}
-  .eq{display:inline-flex;gap:2px;align-items:flex-end;height:11px}
-  .eq i{width:3px;background:currentColor;height:4px;border-radius:2px}
-  .toggles button.on .eq i{animation:eqB .7s ease-in-out infinite alternate}
-  .toggles button.on .eq i:nth-child(2){animation-delay:.15s}
-  .toggles button.on .eq i:nth-child(3){animation-delay:.3s}
-  @keyframes eqB{from{height:3px}to{height:11px}}
-
-  .arm-idle{display:flex;flex-direction:column;gap:16px}
-  .arm-idle .cta{font-size:.82rem;color:var(--muted);line-height:1.7;padding:16px 18px;border-radius:var(--r-md);
-    background:var(--glass);border:1px dashed var(--stroke2)}
-  .arm-idle .cta b{color:var(--gold2)}
-  .quick-arm{display:flex;flex-direction:column;gap:10px}
-  .qa-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:13px 16px;border-radius:var(--r-md);
-    background:var(--glass);border:1px solid var(--stroke);transition:all .25s var(--ease)}
-  .qa-row:hover{transform:translateY(-2px);border-color:rgba(245,183,0,.4);box-shadow:0 10px 28px rgba(0,0,0,.35)}
-  .qa-row .qa-time{font-family:var(--mono);font-weight:600;font-size:.86rem;color:var(--gold2)}
-  .qa-row .qa-title{font-weight:600;font-size:.85rem;flex:1;min-width:150px}
-
-  .armed-event{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:6px}
-  .ccy-badge{font-family:var(--head);font-weight:800;font-size:.86rem;letter-spacing:.06em;
-    background:linear-gradient(135deg,var(--gold),var(--amber));color:#1A1205;padding:5px 13px;border-radius:999px;box-shadow:0 4px 16px rgba(245,183,0,.35)}
-  .armed-title{font-family:var(--head);font-weight:700;font-size:clamp(1rem,2.3vw,1.4rem);letter-spacing:-.01em;line-height:1.15}
-  .armed-when{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-bottom:18px}
-  .armed-when b{color:var(--warn)}
-
-  /* ---------- RING ---------- */
-  .ring-wrap{display:flex;justify-content:center;margin-bottom:8px}
-  .ring-stack{position:relative;width:min(270px,72vw);aspect-ratio:1}
-  .ring-stack svg{width:100%;height:100%;transform:rotate(-90deg)}
-  .ring-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:10}
-  .ring-fg{fill:none;stroke:url(#ringGrad);stroke-width:10;stroke-linecap:round;
-    stroke-dasharray:691.15;stroke-dashoffset:0;
-    transition:stroke-dashoffset .6s linear;
-    filter:drop-shadow(0 0 10px rgba(245,183,0,.55))}
-  .ring-fg.red{stroke:url(#ringGradRed);filter:drop-shadow(0 0 12px rgba(255,69,58,.7))}
-  .ring-fg.green{stroke:url(#ringGradGreen);filter:drop-shadow(0 0 12px rgba(48,217,123,.7))}
-  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
-  .big-count{font-family:var(--mono);font-weight:700;font-size:clamp(1.7rem,5.4vw,2.35rem);letter-spacing:-.01em;font-variant-numeric:tabular-nums;
-    background:linear-gradient(90deg,#fff,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .big-count.hot{background:linear-gradient(90deg,#fff,#FF8A80);-webkit-background-clip:text;background-clip:text;animation:countPulse 1s ease-in-out infinite}
-  @keyframes countPulse{50%{transform:scale(1.035)}}
-  .ring-label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:600}
-  .sub-count{text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-bottom:20px}
-  .sub-count b{color:var(--ink)}
-
-  /* Phase-Pills */
-  .phase-rail{display:flex;gap:6px;margin-bottom:20px}
-  .phase-rail span{flex:1;text-align:center;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-    padding:7px 4px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);color:var(--muted);transition:all .35s var(--ease)}
-  .phase-rail span.done{opacity:.35}
-  .phase-rail span.now{color:#fff;background:linear-gradient(135deg,#FF6157,var(--red));border-color:transparent;box-shadow:0 0 18px rgba(255,69,58,.5)}
-  .phase-rail span.now.g{color:#06341B;background:linear-gradient(135deg,#5CE79B,var(--green));box-shadow:0 0 18px rgba(48,217,123,.45)}
-  .phase-rail span.now.y{color:#3A2B00;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 18px rgba(245,183,0,.45)}
-
-  /* Firmen-Chips */
-  .firm-lights{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin-bottom:22px}
-  .firm-chip{padding:12px 14px;border-radius:var(--r-md);background:var(--glass);border:1px solid var(--stroke);
-    display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:all .25s var(--ease)}
-  .firm-chip:hover{transform:translateY(-2px);border-color:var(--stroke2);box-shadow:0 10px 26px rgba(0,0,0,.35)}
-  .firm-chip.off{opacity:.32}
-  .firm-chip .fc-name{font-family:var(--head);font-weight:700;font-size:.8rem}
-  .firm-chip .fc-window{font-size:.6rem;color:var(--muted);letter-spacing:.04em}
-  .fc-state{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-weight:600;font-size:.66rem;letter-spacing:.06em;
-    padding:5px 10px;border-radius:999px;border:1px solid var(--stroke);align-self:flex-start}
-  .fc-state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}
-  .st-clear{color:#7FF0B2;background:rgba(48,217,123,.12);border-color:rgba(48,217,123,.35)}
-  .st-soon{color:var(--gold2);background:rgba(245,183,0,.12);border-color:rgba(245,183,0,.4)}
-  .st-locked{color:#FF9C94;background:rgba(255,69,58,.16);border-color:rgba(255,69,58,.5);animation:softPulse 1.1s ease-in-out infinite}
-  .st-zone{color:#FFC66B;background:rgba(255,159,28,.14);border-color:rgba(255,159,28,.5);animation:softPulse 1.1s ease-in-out infinite}
-  .st-idle,.st-off{color:var(--muted);background:var(--glass)}
-
-  /* Checkliste */
-  .check-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
-  .ch-label{font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-  .ch-prog{font-family:var(--mono);font-weight:700;font-size:.82rem;color:var(--muted)}
-  .ch-prog.ok{color:var(--green);text-shadow:0 0 12px rgba(48,217,123,.6)}
-  .checklist{display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
-  .chk{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;border-radius:var(--r-md);
-    background:var(--glass);border:1px solid var(--stroke);cursor:pointer;transition:all .22s var(--ease)}
-  .chk:hover{border-color:var(--stroke2);transform:translateX(3px)}
-  .chk.crit{border-color:rgba(255,69,58,.4);background:linear-gradient(135deg,rgba(255,69,58,.09),rgba(255,255,255,.02))}
-  .chk.done{opacity:.42}
-  .chk.done .txt{text-decoration:line-through}
-  .chk input{position:absolute;opacity:0;pointer-events:none}
-  .cbox{flex:none;width:21px;height:21px;border-radius:7px;border:1.5px solid var(--stroke2);background:var(--glass);
-    display:grid;place-items:center;transition:all .25s var(--ease);margin-top:1px}
-  .chk input:checked + .cbox{background:linear-gradient(135deg,var(--gold),var(--amber));border-color:transparent;box-shadow:0 0 14px rgba(245,183,0,.5)}
-  .cbox svg{width:12px;height:12px;stroke:#1A1205;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round;
-    stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .3s var(--ease) .05s}
-  .chk input:checked + .cbox svg{stroke-dashoffset:0}
-  .chk .txt{font-size:.76rem;line-height:1.55;color:#C9C9D4}
-  .chk .txt b{color:#FF9C94;font-weight:600}
-
-  /* Szenarien */
-  .scen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
-  .scen{border-radius:var(--r-md);background:var(--glass);border:1px solid var(--stroke);overflow:hidden;transition:all .25s var(--ease)}
-  .scen:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.4)}
-  .scen .sc-head{font-family:var(--head);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:9px 13px;position:relative}
-  .scen .sc-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
-  .scen.beat .sc-head{color:#7FF0B2}.scen.beat .sc-head::before{background:var(--green);box-shadow:0 0 10px var(--green)}
-  .scen.miss .sc-head{color:#FF9C94}.scen.miss .sc-head::before{background:var(--red);box-shadow:0 0 10px var(--red)}
-  .scen.inline .sc-head{color:var(--muted)}.scen.inline .sc-head::before{background:var(--muted)}
-  .scen .sc-body{padding:4px 13px 14px;display:flex;flex-direction:column;gap:8px}
-  .scen label{font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
-  .scen select,.scen input{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--stroke);border-radius:var(--r-sm);
-    color:var(--ink);font-family:var(--mono);font-weight:600;font-size:.74rem;padding:8px 10px;transition:border-color .2s}
-  .scen select:hover,.scen input:hover{border-color:var(--stroke2)}
-  .scen select.bias-long{color:#7FF0B2}
-  .scen select.bias-short{color:#FF9C94}
 
   /* ---------- CHART ---------- */
   .chart-box{position:relative;height:600px;margin:18px;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--stroke);background:#0B0B10}
@@ -338,7 +191,6 @@
   .tl-ev.usd{color:#FF9C94;border-color:rgba(255,69,58,.55);background:rgba(50,12,10,.85)}
   .tl-ev.past{opacity:.5;cursor:default}
   .tl-ev.ov{border-style:dashed}
-  .tl-ev.armed{color:#1A1205;background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:transparent;box-shadow:0 0 20px rgba(245,183,0,.55);z-index:4}
   .tl-now{position:absolute;top:-10px;bottom:-8px;width:2px;background:linear-gradient(180deg,var(--gold2),rgba(245,183,0,.2));z-index:2;box-shadow:0 0 12px rgba(245,183,0,.7)}
   .tl-now b{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.54rem;font-weight:700;letter-spacing:.12em;
     background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1A1205;padding:2px 7px;border-radius:999px;animation:softPulse 1.6s ease-in-out infinite}
@@ -373,7 +225,6 @@
   .ev:not(.past):hover{transform:translateY(-2px);border-color:var(--stroke2);box-shadow:0 12px 28px rgba(0,0,0,.4)}
   .ev.past{opacity:.3}
   .ev.next{border-color:rgba(255,69,58,.5);background:linear-gradient(135deg,rgba(255,69,58,.1),rgba(255,255,255,.02));box-shadow:0 0 24px rgba(255,69,58,.14)}
-  .ev.armed-ev{border-color:rgba(245,183,0,.55);background:linear-gradient(135deg,rgba(245,183,0,.1),rgba(255,255,255,.02));box-shadow:0 0 24px rgba(245,183,0,.16)}
   .ev-time{font-family:var(--mono);font-weight:600;font-size:.94rem;font-variant-numeric:tabular-nums;color:var(--gold2)}
   .ev-ccy{font-family:var(--mono);font-weight:600;font-size:.64rem;padding:3px 9px;border-radius:999px;background:var(--glass2);border:1px solid var(--stroke);color:var(--muted)}
   .ev-ccy.usd{color:#FF9C94;background:rgba(255,69,58,.14);border-color:rgba(255,69,58,.45)}
@@ -386,10 +237,8 @@
   .mfx-badge{display:inline-block;font-family:var(--mono);font-size:.52rem;font-weight:700;letter-spacing:.06em;
     padding:2px 5px;border-radius:4px;background:rgba(255,69,58,.18);border:1px solid rgba(255,69,58,.45);color:#FF9C94;vertical-align:middle;margin-left:4px}
   .ev.ov{border-color:rgba(255,69,58,.35);border-style:dashed}
-  .ev.next .ev-arm button{background:linear-gradient(135deg,#FF6157,var(--red));color:#fff;border:none;font-weight:700;box-shadow:0 4px 16px rgba(255,69,58,.35);animation:softPulse 1.6s ease-in-out infinite}
   .ev-meta{grid-column:1/-1;font-family:var(--mono);font-size:.64rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
   .ev-meta b{color:var(--gold2)}
-  .ev-lockinfo{grid-column:1/-1;font-family:var(--mono);font-size:.6rem;color:#D08A82;letter-spacing:.02em}
   .empty{font-size:.78rem;color:var(--muted);padding:8px 0}
 
   /* ---------- IFRAME-PANELS ---------- */
@@ -449,7 +298,7 @@
   .c-warn{color:#FFC66B!important}
   .c-bad{color:#FF9C94!important}
   .c-good .t-sub,.c-warn .t-sub,.c-bad .t-sub{color:var(--muted)}
-  .dd-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.05em;padding:3px 8px;border-radius:999px}
+  .dd-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.03em;padding:4px 11px;border-radius:999px;white-space:nowrap;line-height:1.4}
   .dd-tag.eq{color:#FF9C94;background:rgba(255,69,58,.14);border:1px solid rgba(255,69,58,.4)}
   .dd-tag.bal{color:#7FF0B2;background:rgba(48,217,123,.12);border:1px solid rgba(48,217,123,.35)}
   .dd-tag.mix{color:#FFC66B;background:rgba(255,159,28,.13);border:1px solid rgba(255,159,28,.4)}
@@ -493,12 +342,11 @@
   }
 </style>
 </head>
-<body data-phase="IDLE">
+<body>
 
 <div class="aurora a1"></div>
 <div class="aurora a2"></div>
 <div class="aurora a3"></div>
-<div id="edge-glow"></div>
 
 <header class="rv" style="animation-delay:.02s">
   <div class="brand">
@@ -562,48 +410,24 @@
 
 <main>
 
-<!-- ================= COCKPIT + CHART ================= -->
-<div class="cockpit-grid">
-
-  <section id="cockpit" class="card rv" style="animation-delay:.12s">
-    <div class="card-head">
-      <h2><span class="dot"></span><span id="cockpit-title">Command Center</span></h2>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <span class="phase-badge ph-idle" id="phase-badge">Standby</span>
-        <div class="gear-wrap">
-          <button id="gear-btn" title="Alarm-Einstellungen" aria-label="Alarm-Einstellungen">⚙</button>
-          <div class="gear-menu" id="gear-menu">
-            <div class="gm-title">Alarm-Einstellungen</div>
-            <label class="gm-row"><span>Audio-Alerts</span><input type="checkbox" id="tgl-sound"><span class="sw"></span></label>
-            <label class="gm-row"><span>Browser-Push</span><input type="checkbox" id="tgl-notify"><span class="sw"></span></label>
-            <button id="btn-testsound" class="gm-test">▶ Alarm-Töne testen</button>
-            <div class="gm-hint">Alarme feuern nur bei einem armed Event: T−15, T−5, Lock, Release, Clear.</div>
-          </div>
-        </div>
+<!-- ================= CHART ================= -->
+<section class="card mb rv" style="animation-delay:.12s">
+  <div class="card-head">
+    <h2><span class="dot"></span>Live Chart</h2>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="filters">
+        <button class="chart-sym" data-sym="XAU">XAUUSD</button>
+        <button class="chart-sym" data-sym="US30">US30</button>
+        <button class="chart-sym" data-sym="EUR">EURUSD</button>
+        <button class="chart-sym" data-sym="BTC">BTCUSD</button>
       </div>
     </div>
-    <div class="card-body" id="cockpit-body"></div>
-  </section>
-
-  <section class="card rv" style="animation-delay:.18s">
-    <div class="card-head">
-      <h2><span class="dot"></span>Live Chart</h2>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <div class="filters">
-          <button class="chart-sym" data-sym="XAU">XAUUSD</button>
-          <button class="chart-sym" data-sym="US30">US30</button>
-          <button class="chart-sym" data-sym="EUR">EURUSD</button>
-          <button class="chart-sym" data-sym="BTC">BTCUSD</button>
-        </div>
-      </div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-fallback">Chart lädt nur in der lokal geöffneten Datei<br>(TradingView-Embed — Sandbox blockiert externe Scripts)</div>
-      <div id="chart-mount" style="position:absolute;inset:0"></div>
-    </div>
-  </section>
-
-</div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-fallback">Chart lädt nur in der lokal geöffneten Datei<br>(TradingView-Embed — Sandbox blockiert externe Scripts)</div>
+    <div id="chart-mount" style="position:absolute;inset:0"></div>
+  </div>
+</section>
 
 <!-- ================= TIMELINE ================= -->
 <section class="card mb rv" style="animation-delay:.24s">
@@ -614,12 +438,11 @@
         <button class="tl-mode" data-tlmode="24h">24h</button>
         <button class="tl-mode" data-tlmode="week">Woche</button>
       </div>
-      <span class="hint">Klick auf Event = in den Fokus</span>
     </div>
   </div>
   <div class="tl-body">
     <div class="tl-bar" id="tl-bar"></div>
-    <div class="tl-legend">● Rot = USD (Gold · US30) · ● Hell = andere Währung · <b>Schattierung = ±5-Min-Sperrzone</b> · Gold = armed · Vergangene abgedunkelt</div>
+    <div class="tl-legend">● Rot = USD (Gold · US30) · ● Hell = andere Währung · <b>Schattierung = ±5-Min-Zone um Red-Folder-Events</b> · Vergangene abgedunkelt</div>
   </div>
 </section>
 
@@ -650,7 +473,7 @@
   <section class="card rv" style="animation-delay:.36s">
     <div class="card-head">
       <h2><span class="dot"></span>Myfxbook · Live-Kalender</h2>
-      <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im Zeitstrahl &amp; Cockpit.</span>
+      <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im Zeitstrahl.</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget">🌙 Dark</button>
         <button id="btn-myfx-win" title="Falls das Widget nicht lädt: Kalender im eigenen Fenster">◱ Fenster</button>
@@ -877,40 +700,8 @@ const FEED_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json";
 const TZ = "Europe/Berlin";
 const REFRESH_COOLDOWN_MS = 60_000;
 const AUTO_REFRESH_MS = 30 * 60_000;
-const SOON_MS = 15 * 60_000;
 const MAX_WIN_MS = 5 * 60_000;
-const AUTO_DISARM_AFTER_MS = 30 * 60_000;
 const TL_PAST = 12 * 3600_000, TL_FUT = 12 * 3600_000;
-const RING_C = 691.15;           /* 2π · r(110) */
-const RING_SCALE_MS = 60 * 60_000; /* Ring-Skala: letzte 60 Min vor Release */
-
-const FIRMS = [
-  {id:"ftmo",  name:"FTMO",        win:2, lockLabel:"LOCKED",   lockClass:"st-locked", sub:"±2' · Hard Breach"},
-  {id:"f5",    name:"The5ers",     win:2, lockLabel:"LOCKED",   lockClass:"st-locked", sub:"±2' · Soft Breach"},
-  {id:"acg",   name:"Alpha Cap.",  win:5, lockLabel:"LOCKED",   lockClass:"st-locked", sub:"±2–5' · konservativ 5'"},
-  {id:"fpips", name:"FundingPips", win:5, lockLabel:"LOCKED",   lockClass:"st-locked", sub:"±5' · 5h-Regel"},
-  {id:"fnext", name:"FundedNext",  win:5, lockLabel:"40% ZONE", lockClass:"st-zone",   sub:"±5' · 40% Profit"}
-];
-
-const CHECKS_BASE = [
-  {id:"xzeit",  crit:false, txt:'FF-Zeit mit Myfxbook gegengecheckt — bei Abweichung: STOPP &amp; klären'},
-  {id:"pos",    crit:false, txt:'Offene Positionen auf allen aktiven Accounts gesichtet — Plan: flat / halten'},
-  {id:"spread", crit:false, txt:'Spread auf XAUUSD / US30 normal — kein Pre-News-Widening'},
-  {id:"szen",   crit:false, txt:'Szenarien Beat / Miss / Inline unten ausgefüllt'},
-  {id:"risk",   crit:false, txt:'Max-Risiko je Account fixiert — Daily-DD-Puffer im Kopf'}
-];
-const CHECKS_FIRM = {
-  ftmo:  {id:"c_ftmo",  crit:true,  txt:'<b>FTMO:</b> flat ODER SL/TP weit außerhalb Spike-Range — SL/TP-Trigger im ±2-Fenster = <b>HARD BREACH</b>'},
-  f5:    {id:"c_f5",    crit:false, txt:'<b>5ers:</b> keine Pending-Brackets ums Event · Ausführung nur außerhalb ±2 (Serverzeit)'},
-  acg:   {id:"c_acg",   crit:false, txt:'<b>ACG:</b> Fenster meines Programms geklärt (Pro 8/10 = ±2, sonst ±5)'},
-  fpips: {id:"c_fpips", crit:false, txt:'<b>F.Pips:</b> laufende Trades ≥5h alt? Sonst gilt ±5 strikt (Profit-Abzug)'},
-  fnext: {id:"c_fnext", crit:false, txt:'<b>F.Next:</b> Entry im ±5-Fenster bewusst? Nur 40% Profit zählt, 100% Verlust'}
-};
-const SCEN_DEFS = [
-  {id:"beat",   cls:"beat",   label:"Beat (Actual > FCST)"},
-  {id:"miss",   cls:"miss",   label:"Miss (Actual < FCST)"},
-  {id:"inline", cls:"inline", label:"Inline (≈ FCST)"}
-];
 
 const FALLBACK_EVENTS = [
   {title:"ISM Services PMI",      country:"USD", date:"07-06-2026", time:"2:00pm",  impact:"High",   forecast:"54.2",  previous:"54.5"},
@@ -937,15 +728,9 @@ let ccyFilter = "ALL";
 let lastFetch = 0;
 let usingFallback = false;
 
-let settings = store.get("wr:settings") || { soundOn:true, notifyOn:false, firms:{ftmo:true,f5:true,acg:true,fpips:true,fnext:true} };
-if(!settings.firms) settings.firms = {ftmo:true,f5:true,acg:true,fpips:true,fnext:true};
+let settings = store.get("wr:settings") || {};
 ccyFilter = settings.ccyFilter || "ALL";
 
-let armed = null;
-let evData = {};
-let lastTickSecond = -1;
-let firmStateEls = {};      /* gecachte data-firmstate-Refs, neu befüllt bei jedem renderCockpit() */
-let cachedThresholds = [];  /* gecachte alertThresholds(), neu berechnet bei arm/disarm/Firmen-Toggle */
 let impFilter = "HIGH";
 impFilter = (settings.impFilter === "HM") ? "HM" : "HIGH";
 let tlMode = (settings.tlMode === "week") ? "week" : "24h";
@@ -1047,42 +832,6 @@ function renderSessions(nowDate){
   }
 }
 
-/* ---------- Audio ---------- */
-let AC = null;
-function ac(){
-  if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return null; } }
-  if(AC && AC.state === "suspended"){ AC.resume().catch(()=>{}); }
-  return AC;
-}
-function beep(freq, dur, when, type, vol){
-  const a = ac(); if(!a || !settings.soundOn) return;
-  when = when || 0; type = type || "square"; vol = vol || 0.16;
-  try{
-    const o = a.createOscillator(), g = a.createGain();
-    o.type = type; o.frequency.value = freq;
-    g.gain.setValueAtTime(vol, a.currentTime + when);
-    g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + when + dur);
-    o.connect(g); g.connect(a.destination);
-    o.start(a.currentTime + when); o.stop(a.currentTime + when + dur + 0.05);
-  }catch(e){}
-}
-const SND = {
-  final(){ beep(880,.12); beep(880,.12,.18); },
-  ping(){ beep(988,.12); },
-  lock(){ beep(220,.25); beep(220,.25,.3); beep(170,.45,.6); },
-  minute(){ beep(1200,.1); beep(1200,.1,.14); },
-  tick(){ beep(1500,.05,0,"sine",.12); },
-  release(){ beep(700,.18); beep(950,.18,.2); beep(700,.18,.4); beep(950,.18,.6); beep(1250,.5,.8); },
-  inner(){ beep(659,.14); beep(880,.2,.18); },
-  clear(){ beep(523,.15); beep(659,.15,.18); beep(784,.15,.36); beep(1046,.35,.54); }
-};
-
-/* ---------- Notifications ---------- */
-function notify(title, body){
-  if(!settings.notifyOn) return;
-  try{ if(window.Notification && Notification.permission === "granted") new Notification(title, {body:body}); }catch(e){}
-}
-
 /* ---------- Feed ---------- */
 async function loadFeed(manual){
   const btn = document.getElementById("btn-refresh");
@@ -1114,8 +863,6 @@ async function loadFeed(manual){
     renderEvents();
     renderTimeline();
     fillTicker();
-    renderCockpit();
-    tick();
     if(btn) setTimeout(()=>{ btn.classList.remove("spinning"); }, 600);
   }
 }
@@ -1127,9 +874,8 @@ function setFeedStatus(ok, text){
   document.getElementById("feed-status").textContent = ok ? "Live" : "Fallback";
 }
 
-/* ---------- Armed-Kern ---------- */
+/* ---------- Myfxbook-Override: Events, die FF orange führt, Myfxbook aber rot ---------- */
 function eventKey(e){ return e.country + "@" + e.ts; }
-/* --- Myfxbook-Override: Events, die FF orange führt, Myfxbook aber rot --- */
 let overrides = store.get("wr:overrides") || {};
 function ovKey(e){ return e.country + "@" + e.ts + "|" + e.title; }
 function isOverridden(e){ return !!overrides[ovKey(e)]; }
@@ -1139,294 +885,10 @@ function toggleOverride(e){
   if(overrides[k]) delete overrides[k];
   else overrides[k] = e.ts;
   store.set("wr:overrides", overrides);
-  renderEvents(); renderTimeline(); renderCockpit(); tick();
+  renderEvents(); renderTimeline();
 }
 function highEvents(){ return events.filter(e => effImpact(e) === "High"); }
 function clusterAt(ts, country){ return events.filter(e => effImpact(e) === "High" && e.ts === ts && e.country === country); }
-function activeFirmList(){ return FIRMS.filter(f => armed && armed.firms[f.id]); }
-function outerWinMin(){ const l = activeFirmList(); return l.length ? Math.max(...l.map(f=>f.win)) : 5; }
-function innerWinMin(){ const l = activeFirmList(); return l.length ? Math.min(...l.map(f=>f.win)) : 5; }
-
-function phaseOf(now){
-  if(!armed) return "IDLE";
-  const ts = armed.ts, w = outerWinMin()*60000;
-  if(now < ts - SOON_MS) return "PREP";
-  if(now < ts - w) return "FINAL";
-  if(now < ts) return "LOCKED";
-  if(now <= ts + w) return "LIVE";
-  return "CLEARED";
-}
-
-function arm(ts, country){
-  const cluster = clusterAt(ts, country);
-  if(!cluster.length) return;
-  const key = country + "@" + ts;
-  armed = {
-    key, ts, country,
-    titles: cluster.map(e => e.title),
-    firms: {...settings.firms},
-    firedAlerts: {},
-    lastPhase: null
-  };
-  refreshThresholds();
-  syncFired();
-  armed.lastPhase = phaseOf(Date.now());
-  evData = normBias(store.get("wr:ev:" + key) || { checks:{}, scen:{} });
-  lastTickSecond = -1;
-  persistArmed();
-  ac();
-  renderEvents();
-  renderTimeline();
-  renderCockpit();
-  tick();
-  const el = document.getElementById("cockpit");
-  if(el && el.scrollIntoView) el.scrollIntoView({behavior:"smooth", block:"start"});
-}
-function disarm(silent){
-  if(armed) store.del("wr:armed");
-  armed = null; evData = {};
-  refreshThresholds();
-  if(!silent) SND.ping();
-  renderEvents();
-  renderTimeline();
-  renderCockpit();
-  tick();
-}
-function persistArmed(){ if(armed) store.set("wr:armed", armed); }
-function persistEv(){ if(armed) store.set("wr:ev:" + armed.key, evData); }
-function normBias(d){
-  if(d && d.scen) for(const k in d.scen){
-    const s = d.scen[k];
-    if(s && typeof s.bias === "string"){
-      if(s.bias.indexOf("LONG") === 0) s.bias = "LONG";
-      else if(s.bias.indexOf("SHORT") === 0) s.bias = "SHORT";
-    }
-  }
-  return d;
-}
-
-function computeAlertThresholds(){
-  if(!armed) return [];
-  const ts = armed.ts, wOut = outerWinMin()*60000, wIn = innerWinMin()*60000;
-  const list = [
-    {id:"t15",   at: ts - 15*60000, snd:"final",  msg:"T−15 — Final Check starten"},
-    {id:"t10",   at: ts - 10*60000, snd:"ping",   msg:"T−10"},
-    {id:"t5",    at: ts - 5*60000,  snd:"ping",   msg:"T−5"},
-    {id:"lock",  at: ts - wOut,     snd:"lock",   msg:"SPERRFENSTER AKTIV (±" + outerWinMin() + "')"},
-    {id:"t60",   at: ts - 60000,    snd:"minute", msg:"T−60 Sekunden"},
-    {id:"rel",   at: ts,            snd:"release",msg:"RELEASE — " + armed.titles.join(" + ")},
-    {id:"clear", at: ts + wOut,     snd:"clear",  msg:"ALLE FENSTER OFFEN — clear"}
-  ];
-  if(wIn !== wOut){
-    list.push({id:"inner", at: ts + wIn, snd:"inner", msg:"±" + innerWinMin() + "'-Firmen wieder frei"});
-  }
-  return list.sort((a,b)=>a.at-b.at);
-}
-/* Schwellen hängen nur von armed.ts + aktiven Firmen ab → nicht bei jedem 1s-Tick neu berechnen,
-   sondern nur wenn sich einer der beiden tatsächlich ändert (arm/disarm/Firmen-Toggle/Hydration). */
-function refreshThresholds(){ cachedThresholds = armed ? computeAlertThresholds() : []; }
-function syncFired(){
-  if(!armed) return;
-  const now = Date.now();
-  cachedThresholds.forEach(t => { if(t.at <= now) armed.firedAlerts[t.id] = true; });
-}
-
-/* ---------- Cockpit ---------- */
-function renderCockpit(){
-  const body = document.getElementById("cockpit-body");
-  syncToggleButtons();
-  if(!armed){
-    const now = Date.now();
-    const seen = new Set();
-    const upcoming = highEvents().filter(e => e.ts > now)
-      .filter(e => { const k = eventKey(e); if(seen.has(k)) return false; seen.add(k); return true; })
-      .slice(0,4);
-    const nextEv = upcoming[0];
-    let hero = "";
-    if(nextEv){
-      const titles = clusterAt(nextEv.ts, nextEv.country).map(x=>x.title).join(" + ");
-      hero = '<div class="cc-hero">'
-        + '<div class="cc-hero-label">Nächstes Red-Folder-Event</div>'
-        + '<div class="cc-hero-row"><span class="ev-ccy' + (nextEv.country==="USD"?" usd":"") + '">' + esc(nextEv.country) + '</span>'
-        + '<span class="cc-hero-title">' + esc(titles) + '</span></div>'
-        + '<div class="cc-hero-count" id="cc-count" data-ts="' + nextEv.ts + '">--:--:--</div>'
-        + '<div class="cc-hero-when">' + fmtFullDE.format(new Date(nextEv.ts)) + ' Uhr · ' + fmtNYshort.format(new Date(nextEv.ts)) + ' NY</div>'
-        + '<button class="primary cc-hero-arm" data-arm-ts="' + nextEv.ts + '" data-arm-ccy="' + esc(nextEv.country) + '">🎯 In den Fokus setzen</button>'
-        + '</div>';
-    }else{
-      hero = '<div class="cc-hero"><div class="cc-hero-label">Keine kommenden Red Folder im Feed dieser Woche</div>'
-        + '<div class="cc-hero-when">Der FF-Feed erneuert sich sonntags. Prüfe die LED oben — bei „FALLBACK" ist der Live-Feed blockiert.</div></div>';
-    }
-    let qa = "";
-    if(upcoming.length > 1){
-      qa = '<div class="cc-next-label">Danach</div><div class="quick-arm">' + upcoming.slice(1).map(e => {
-        const titles = clusterAt(e.ts, e.country).map(x=>x.title).join(" + ");
-        return '<div class="qa-row">'
-          + '<span class="qa-time">' + fmtFullDE.format(new Date(e.ts)) + '</span>'
-          + '<span class="ev-ccy' + (e.country==="USD"?" usd":"") + '">' + esc(e.country) + '</span>'
-          + '<span class="qa-title">' + esc(titles) + '</span>'
-          + '<button data-arm-ts="' + e.ts + '" data-arm-ccy="' + esc(e.country) + '">🎯 Fokus</button>'
-          + '</div>';
-      }).join("") + '</div>';
-    }
-    body.innerHTML = '<div class="arm-idle">' + hero + qa + '</div>';
-    firmStateEls = {};
-    setPhaseBadge("IDLE");
-    wireCockpit();
-    return;
-  }
-
-  const f = FIRMS.map(fm => {
-    const on = armed.firms[fm.id];
-    return '<div class="firm-chip ' + (on ? "" : "off") + '" data-firm="' + fm.id + '" title="Klick: Firma für dieses Event an/aus">'
-      + '<span class="fc-name">' + fm.name + '</span>'
-      + '<span class="fc-window">' + fm.sub + '</span>'
-      + '<span class="fc-state st-idle" data-firmstate="' + fm.id + '">—</span>'
-      + '</div>';
-  }).join("");
-
-  const allChecks = CHECKS_BASE.concat(FIRMS.filter(fm=>armed.firms[fm.id]).map(fm=>CHECKS_FIRM[fm.id]));
-  const cl = allChecks.map(c => {
-    const done = !!evData.checks[c.id];
-    return '<label class="chk ' + (done?"done":"") + (c.crit?" crit":"") + '">'
-      + '<input type="checkbox" data-chk="' + c.id + '" ' + (done?"checked":"") + '>'
-      + '<span class="cbox"><svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7-8"/></svg></span>'
-      + '<span class="txt">' + c.txt + '</span>'
-      + '</label>';
-  }).join("");
-
-  const sc = SCEN_DEFS.map(s => {
-    const d = evData.scen[s.id] || {};
-    const bias = d.bias || "";
-    const biasCls = bias==="LONG" ? "bias-long" : bias==="SHORT" ? "bias-short" : "";
-    return '<div class="scen ' + s.cls + '">'
-      + '<div class="sc-head">' + s.label + '</div>'
-      + '<div class="sc-body">'
-      + '<label>Bias</label>'
-      + '<select data-scen="' + s.id + '" data-fld="bias" class="' + biasCls + '">'
-      +   '<option value=""' + (bias===""?" selected":"") + '>— wählen —</option>'
-      +   '<option' + (bias==="LONG"?" selected":"") + '>LONG</option>'
-      +   '<option' + (bias==="SHORT"?" selected":"") + '>SHORT</option>'
-      +   '<option' + (bias==="NO TRADE"?" selected":"") + '>NO TRADE</option>'
-      +   '<option' + (bias==="WAIT & FADE"?" selected":"") + '>WAIT &amp; FADE</option>'
-      + '</select>'
-      + '<label>Trigger / Level</label>'
-      + '<input type="text" data-scen="' + s.id + '" data-fld="level" value="' + esc(d.level||"") + '" placeholder="z.B. Break 15m-High">'
-      + '<label>Invalidierung</label>'
-      + '<input type="text" data-scen="' + s.id + '" data-fld="inval" value="' + esc(d.inval||"") + '" placeholder="z.B. Rückkehr in Range">'
-      + '</div></div>';
-  }).join("");
-
-  body.innerHTML =
-      '<div class="armed-event"><span class="ccy-badge">' + esc(armed.country) + '</span>'
-    + '<span class="armed-title">' + esc(armed.titles.join(" + ")) + '</span></div>'
-    + '<div class="armed-when">' + fmtFullDE.format(new Date(armed.ts)) + ' Uhr DE · ' + fmtNYshort.format(new Date(armed.ts)) + ' NY'
-    + (armed.country !== "USD" ? ' · <b>Nicht-USD: Fenster gilt für ' + esc(armed.country) + '-Instrumente, nicht für Gold/US30</b>' : '')
-    + '</div>'
-    + '<div class="ring-wrap"><div class="ring-stack">'
-    +   '<svg viewBox="0 0 240 240">'
-    +     '<defs>'
-    +       '<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5B700"/><stop offset="1" stop-color="#FF9F1C"/></linearGradient>'
-    +       '<linearGradient id="ringGradRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6157"/><stop offset="1" stop-color="#FF453A"/></linearGradient>'
-    +       '<linearGradient id="ringGradGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5CE79B"/><stop offset="1" stop-color="#30D97B"/></linearGradient>'
-    +     '</defs>'
-    +     '<circle class="ring-bg" cx="120" cy="120" r="110"/>'
-    +     '<circle class="ring-fg" id="ring-fg" cx="120" cy="120" r="110"/>'
-    +   '</svg>'
-    +   '<div class="ring-center"><span class="big-count" id="ac-count">--:--:--</span><span class="ring-label" id="ring-label">bis Release</span></div>'
-    + '</div></div>'
-    + '<div class="sub-count" id="ac-sub">—</div>'
-    + '<div class="phase-rail" id="phase-rail">'
-    +   '<span data-ph="PREP">Prep</span><span data-ph="FINAL">Final&nbsp;T−15</span><span data-ph="LOCKED">Locked</span><span data-ph="LIVE">Live</span><span data-ph="CLEARED">Cleared</span>'
-    + '</div>'
-    + '<div class="firm-lights">' + f + '</div>'
-    + '<div class="check-head"><span class="ch-label">Pre-Flight Checks</span><span class="ch-prog" id="chk-prog">0/0</span><button id="btn-chk-reset" style="padding:5px 11px;font-size:.6rem">Reset</button></div>'
-    + '<div class="checklist">' + cl + '</div>'
-    + '<div class="check-head"><span class="ch-label">Szenarien</span><span></span><button id="btn-disarm" class="danger">✕ Fokus beenden</button></div>'
-    + '<div class="scen-grid">' + sc + '</div>';
-
-  firmStateEls = {};
-  FIRMS.forEach(fm => { firmStateEls[fm.id] = document.querySelector('[data-firmstate="' + fm.id + '"]'); });
-  updateChecklistProgress();
-  wireCockpit();
-}
-
-function wireCockpit(){
-  const body = document.getElementById("cockpit-body");
-  body.querySelectorAll("[data-arm-ts]").forEach(b => b.addEventListener("click", () => arm(parseInt(b.dataset.armTs,10), b.dataset.armCcy)));
-  body.querySelectorAll(".firm-chip").forEach(ch => ch.addEventListener("click", () => {
-    const id = ch.dataset.firm;
-    armed.firms[id] = !armed.firms[id];
-    settings.firms = {...armed.firms};
-    store.set("wr:settings", settings);
-    refreshThresholds();
-    syncFired();
-    armed.lastPhase = phaseOf(Date.now());
-    persistArmed();
-    renderCockpit(); tick();
-  }));
-  body.querySelectorAll("[data-chk]").forEach(cb => cb.addEventListener("change", () => {
-    evData.checks[cb.dataset.chk] = cb.checked;
-    cb.closest(".chk").classList.toggle("done", cb.checked);
-    updateChecklistProgress();
-    persistEv();
-  }));
-  body.querySelectorAll("[data-scen]").forEach(inp => inp.addEventListener("input", () => {
-    const s = inp.dataset.scen, fld = inp.dataset.fld;
-    if(!evData.scen[s]) evData.scen[s] = {};
-    evData.scen[s][fld] = inp.value;
-    if(fld === "bias"){
-      inp.classList.toggle("bias-long", inp.value === "LONG");
-      inp.classList.toggle("bias-short", inp.value === "SHORT");
-    }
-    persistEv();
-  }));
-  const rst = document.getElementById("btn-chk-reset");
-  if(rst) rst.addEventListener("click", () => { evData.checks = {}; persistEv(); renderCockpit(); });
-  const dis = document.getElementById("btn-disarm");
-  if(dis) dis.addEventListener("click", () => disarm(false));
-}
-
-function updateChecklistProgress(){
-  const el = document.getElementById("chk-prog"); if(!el || !armed) return;
-  const total = CHECKS_BASE.length + FIRMS.filter(fm=>armed.firms[fm.id]).length;
-  const done = Object.keys(evData.checks).filter(k => evData.checks[k]).length;
-  el.textContent = done + "/" + total;
-  el.classList.toggle("ok", done >= total && total > 0);
-}
-
-const phaseBadgeEl = document.getElementById("phase-badge");
-function setPhaseBadge(ph){
-  const el = phaseBadgeEl;
-  const map = {IDLE:"ph-idle",PREP:"ph-prep",FINAL:"ph-final",LOCKED:"ph-locked",LIVE:"ph-live",CLEARED:"ph-cleared"};
-  const lbl = {PREP:"Prep",FINAL:"Final Check",LOCKED:"Locked",LIVE:"Live",CLEARED:"Cleared"};
-  if(ph === "IDLE"){ el.style.display = "none"; }
-  else { el.style.display = ""; el.className = "phase-badge " + (map[ph] || "ph-idle"); el.textContent = lbl[ph] || ph; }
-  document.body.dataset.phase = ph;
-}
-
-/* ---------- Ring ---------- */
-function updateRing(now, ph){
-  const fg = document.getElementById("ring-fg");
-  const lbl = document.getElementById("ring-label");
-  if(!fg || !armed) return;
-  const ts = armed.ts, wOut = outerWinMin()*60000;
-  let frac = 1, color = "gold", label = "bis Release";
-  if(ph === "CLEARED"){
-    frac = 1; color = "green"; label = "clear";
-  }else if(now >= ts){
-    frac = Math.min(1, (now - ts) / wOut); color = "red"; label = "Fenster läuft";
-  }else{
-    const rem = ts - now;
-    frac = Math.min(1, rem / RING_SCALE_MS);
-    if(ph === "LOCKED") color = "red";
-    label = rem > RING_SCALE_MS ? "Release in >60 Min" : "bis Release";
-  }
-  fg.classList.remove("red","green");
-  if(color !== "gold") fg.classList.add(color);
-  fg.style.strokeDashoffset = String(RING_C * (1 - frac));
-  if(lbl) lbl.textContent = label;
-}
 
 /* ---------- Marktkalender: Feiertage & Frühschluss ----------
    Quelle: NYSE/CME-Feiertagskalender + Broker-Holiday-Schedules (OANDA/FXCM).
@@ -1554,14 +1016,12 @@ function renderTimeline(){
   for(const {e, p, lane} of placed){
     const titles = clusterAt(e.ts, e.country).map(x=>x.title).join(" + ");
     const past = e.ts < now;
-    const isArmed = armed && armed.key === eventKey(e);
     const ov = isOverridden(e);
     const tlTitle = esc(titles) + ' · ' + fmtTimeDE.format(new Date(e.ts)) + ' DE' + (ov ? ' · via Myfxbook-Override auf Rot hochgestuft' : '');
-    html += '<button class="tl-ev' + (e.country==="USD" ? " usd" : "") + (past ? " past" : "") + (isArmed ? " armed" : "") + (ov ? " ov" : "") + '"'
+    html += '<span class="tl-ev' + (e.country==="USD" ? " usd" : "") + (past ? " past" : "") + (ov ? " ov" : "") + '"'
       + ' style="left:' + p.toFixed(3) + '%;top:' + laneTop[lane] + '"'
       + ' title="' + tlTitle + '"'
-      + (past ? ' disabled' : '')
-      + ' data-tlts="' + e.ts + '" data-tlccy="' + esc(e.country) + '"><b>' + esc(e.country) + '</b> ' + fmtTimeDE.format(new Date(e.ts)) + (ov ? ' <span class="mfx-badge">MFX</span>' : '') + '</button>';
+      + '><b>' + esc(e.country) + '</b> ' + fmtTimeDE.format(new Date(e.ts)) + (ov ? ' <span class="mfx-badge">MFX</span>' : '') + '</span>';
   }
   if(!evs.length){
     html += '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted)">' + (tlMode === "week" ? "Keine Red Folder in dieser FF-Woche" : "Keine Red Folder im 12h-Fenster") + '</span>';
@@ -1600,29 +1060,21 @@ function renderEvents(){
     const isHigh = effImpact(e) === "High";
     const isNext = isHigh && e.ts === nextTs;
     const isUsd  = e.country === "USD";
-    const isArmed = isHigh && armed && armed.key === eventKey(e);
     const impCls = ov ? "imp-h" : (IMP[e.impact] || "imp-x");
-    html += '<div class="ev' + (isPast?" past":"") + (isNext?" next":"") + (isArmed?" armed-ev":"") + (ov?" ov":"") + '">'
+    html += '<div class="ev' + (isPast?" past":"") + (isNext?" next":"") + (ov?" ov":"") + '">'
       + '<span class="imp ' + impCls + '" title="' + (ov ? "Von dir auf Rot hochgestuft (Myfxbook)" : esc(e.impact) + " Impact (FF)") + '"></span>'
       + '<span class="ev-time">' + fmtTimeDE.format(d) + '</span>'
       + '<span class="ev-ccy' + (isUsd?" usd":"") + '">' + esc(e.country) + '</span>'
       + '<span class="ev-title">' + esc(e.title) + (ov ? ' <span class="mfx-badge" title="Auf Myfxbook-Einstufung hochgestuft">MFX</span>' : '') + '</span>'
       + '<span class="ev-arm">'
-      +   (isHigh && !isPast ? '<button data-arm-ts="' + e.ts + '" data-arm-ccy="' + esc(e.country) + '">' + (isArmed ? "Im Fokus" : "🎯 Fokus") + '</button>' : '')
       +   (!isPast && e.impact !== "High" ? '<button class="ov-btn' + (ov?" on":"") + '" data-ov="' + esc(ovKey(e)) + '" title="' + (ov ? "Hochstufung zurücknehmen" : "Myfxbook stuft rot ein? Hier auf Rot hochstufen") + '">' + (ov ? "↓ Zurück" : "↑ Rot") + '</button>' : '')
       + '</span>'
       + '<span class="ev-meta">'
       +   (e.forecast ? '<span>FCST <b>' + esc(e.forecast) + '</b></span>' : '')
       +   (e.previous ? '<span>PREV <b>' + esc(e.previous) + '</b></span>' : '')
       +   '<span>' + fmtNYshort.format(d) + ' NY</span>'
-      + '</span>';
-    if(isHigh && !isPast){
-      const w2a = fmtTimeDE.format(new Date(e.ts - 2*60000)), w2b = fmtTimeDE.format(new Date(e.ts + 2*60000));
-      const w5a = fmtTimeDE.format(new Date(e.ts - 5*60000)), w5b = fmtTimeDE.format(new Date(e.ts + 5*60000));
-      html += '<span class="ev-lockinfo">Lock ±2: ' + w2a + '–' + w2b + ' · Lock ±5: ' + w5a + '–' + w5b
-        + (isUsd ? ' · USD-Instrumente (Gold/US30)' : ' · gilt für ' + esc(e.country) + '-Instrumente') + '</span>';
-    }
-    html += '</div>';
+      + '</span>'
+      + '</div>';
   }
   wrap.innerHTML = html;
   wrap.scrollTop = keepScroll;
@@ -1631,126 +1083,10 @@ function renderEvents(){
 /* ---------- Tick ---------- */
 const clockDeEl = document.getElementById("clock-de");
 function tick(){
-  const now = Date.now();
-  const nowDate = new Date(now);
+  const nowDate = new Date();
   clockDeEl.textContent = fmtClockDE.format(nowDate);
   renderSessions(nowDate);
-  if(!armed){
-    setPhaseBadge("IDLE");
-    const cc = document.getElementById("cc-count");
-    if(cc){
-      const ts = parseInt(cc.dataset.ts, 10);
-      const diff = ts - now;
-      if(diff <= 0){ renderCockpit(); }
-      else cc.textContent = "T−" + fmtCountdown(diff);
-    }
-    return;
-  }
-
-  const ts = armed.ts, wOut = outerWinMin()*60000;
-  const ph = phaseOf(now);
-
-  if(ph !== armed.lastPhase){
-    armed.lastPhase = ph;
-    persistArmed();
-  }
-  setPhaseBadge(ph);
-  updateRing(now, ph);
-
-  if(now > ts + wOut + AUTO_DISARM_AFTER_MS){ disarm(true); return; }
-
-  for(const t of cachedThresholds){
-    if(!armed.firedAlerts[t.id] && now >= t.at){
-      armed.firedAlerts[t.id] = true;
-      if(SND[t.snd]) SND[t.snd]();
-      notify("WARROOM", t.msg);
-      persistArmed();
-    }
-  }
-  const secToGo = Math.ceil((ts - now)/1000);
-  if(secToGo >= 1 && secToGo <= 10 && secToGo !== lastTickSecond){ SND.tick(); lastTickSecond = secToGo; }
-
-  const cEl = document.getElementById("ac-count");
-  const sEl = document.getElementById("ac-sub");
-  if(cEl && sEl){
-    if(ph === "CLEARED"){
-      cEl.textContent = "CLEAR";
-      cEl.classList.remove("hot");
-      sEl.innerHTML = "Alle Fenster offen · Release war " + fmtTimeDE.format(new Date(ts)) + " · <b>Debrief &amp; Fokus beenden</b>";
-    }else if(now < ts){
-      cEl.textContent = "T−" + fmtCountdown(ts - now);
-      cEl.classList.toggle("hot", ph === "LOCKED");
-      const lockStart = ts - wOut;
-      sEl.innerHTML = ph === "LOCKED"
-        ? "Sperrfenster aktiv seit " + fmtTimeDE.format(new Date(lockStart)) + " · Release " + fmtTimeDE.format(new Date(ts))
-        : "Lock (±" + outerWinMin() + "') ab <b>" + fmtTimeDE.format(new Date(lockStart)) + "</b> · in " + fmtCountdown(lockStart - now);
-    }else{
-      cEl.textContent = "T+" + fmtCountdown(now - ts);
-      cEl.classList.add("hot");
-      sEl.innerHTML = "Äußeres Fenster zu in <b>" + fmtCountdown(ts + wOut - now) + "</b> (" + fmtTimeDE.format(new Date(ts + wOut)) + ")";
-    }
-  }
-
-  const rail = document.getElementById("phase-rail");
-  if(rail){
-    const order = ["PREP","FINAL","LOCKED","LIVE","CLEARED"];
-    const idx = order.indexOf(ph);
-    rail.querySelectorAll("span").forEach((sp,i) => {
-      sp.className = i < idx ? "done" : i === idx ? ("now" + (ph==="CLEARED"?" g":ph==="FINAL"?" y":"")) : "";
-    });
-  }
-
-  FIRMS.forEach(fm => {
-    const el = firmStateEls[fm.id];
-    if(!el) return;
-    if(!armed.firms[fm.id]){ el.className = "fc-state st-off"; el.textContent = "Aus"; return; }
-    const w = fm.win*60000, start = ts - w, end = ts + w;
-    if(now >= start && now <= end){ el.className = "fc-state " + fm.lockClass; el.textContent = fm.lockLabel + " " + fmtCountdown(end - now); }
-    else if(now < start && start - now <= SOON_MS){ el.className = "fc-state st-soon"; el.textContent = "SOON −" + fmtCountdown(start - now); }
-    else if(now < start){ el.className = "fc-state st-clear"; el.textContent = "CLEAR"; }
-    else { el.className = "fc-state st-clear"; el.textContent = "FREI"; }
-  });
 }
-
-/* ---------- Alarm-Einstellungen (Zahnrad) ---------- */
-function syncToggleButtons(){
-  const s = document.getElementById("tgl-sound"), n = document.getElementById("tgl-notify");
-  if(s) s.checked = !!settings.soundOn;
-  if(n) n.checked = !!settings.notifyOn;
-}
-document.getElementById("gear-btn").addEventListener("click", (e) => {
-  e.stopPropagation();
-  document.getElementById("gear-menu").classList.toggle("open");
-});
-document.addEventListener("click", (e) => {
-  const m = document.getElementById("gear-menu");
-  if(m && m.classList.contains("open") && !e.target.closest(".gear-wrap")) m.classList.remove("open");
-});
-document.getElementById("tgl-sound").addEventListener("change", () => {
-  settings.soundOn = document.getElementById("tgl-sound").checked;
-  store.set("wr:settings", settings);
-  if(settings.soundOn){ ac(); SND.ping(); }
-});
-document.getElementById("tgl-notify").addEventListener("change", () => {
-  const cb = document.getElementById("tgl-notify");
-  if(cb.checked){
-    try{
-      if(window.Notification){
-        Notification.requestPermission().then(p => {
-          settings.notifyOn = (p === "granted");
-          store.set("wr:settings", settings);
-          syncToggleButtons();
-          if(settings.notifyOn) notify("Prop Dashboard", "Benachrichtigungen aktiv");
-        });
-        return;
-      }
-    }catch(e){}
-    cb.checked = false;
-  }
-  settings.notifyOn = false;
-  store.set("wr:settings", settings);
-});
-document.getElementById("btn-testsound").addEventListener("click", () => { ac(); SND.release(); });
 
 /* ---------- Filter & Refresh ---------- */
 document.querySelectorAll(".ccy-filter").forEach(b => b.addEventListener("click", () => {
@@ -1779,19 +1115,13 @@ document.querySelectorAll(".tl-mode").forEach(b => b.addEventListener("click", (
   renderTimeline();
 }));
 document.querySelectorAll(".tl-mode").forEach(b => b.classList.toggle("active", b.dataset.tlmode === tlMode));
-/* Event-Delegation statt Re-Bind bei jedem renderEvents()/renderTimeline() (läuft alle 60s + bei jedem Feed-Reload) */
+/* Event-Delegation statt Re-Bind bei jedem renderEvents() (läuft alle 60s + bei jedem Feed-Reload) */
 document.getElementById("event-list").addEventListener("click", (e) => {
-  const armBtn = e.target.closest("[data-arm-ts]");
-  if(armBtn){ arm(parseInt(armBtn.dataset.armTs,10), armBtn.dataset.armCcy); return; }
   const ovBtn = e.target.closest("[data-ov]");
   if(ovBtn){
     const ev = events.find(x => ovKey(x) === ovBtn.dataset.ov);
     if(ev) toggleOverride(ev);
   }
-});
-document.getElementById("tl-bar").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-tlts]");
-  if(b) arm(parseInt(b.dataset.tlts,10), b.dataset.tlccy);
 });
 document.getElementById("btn-ff-win").addEventListener("click", () => {
   window.open("https://www.forexfactory.com/calendar","ffwin","width=1180,height=920");
@@ -1834,21 +1164,10 @@ document.getElementById("btn-pj-win").addEventListener("click", () => {
 document.getElementById("btn-refresh").addEventListener("click", (e) => { e.stopPropagation(); loadFeed(true); });
 document.getElementById("btn-refresh").addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); loadFeed(true); } });
 
-["click","keydown"].forEach(evt => document.addEventListener(evt, function once(){ ac(); document.removeEventListener(evt, once); }, {once:true}));
-
-/* ---------- Hydration ---------- */
-(function hydrate(){
-  const a = store.get("wr:armed");
-  if(a && a.ts && Date.now() < a.ts + outerWinMinOf(a) + AUTO_DISARM_AFTER_MS){
-    armed = a;
-    armed.lastPhase = null;
-    evData = normBias(store.get("wr:ev:" + a.key) || { checks:{}, scen:{} });
-    refreshThresholds();
-    syncFired();
-    armed.lastPhase = phaseOf(Date.now());
-  }else if(a){
-    store.del("wr:armed");
-  }
+/* ---------- Hydration: alte Fokus/Alarm-Reste aus localStorage räumen, Override-Aufräumung ---------- */
+(function cleanup(){
+  store.del("wr:armed");
+  try{ store.keys().filter(k => k.indexOf("wr:ev:") === 0).forEach(k => store.del(k)); }catch(e){}
   try{
     let ovChanged = false;
     for(const k in overrides){
@@ -1856,22 +1175,11 @@ document.getElementById("btn-refresh").addEventListener("keydown", (e) => { if(e
     }
     if(ovChanged) store.set("wr:overrides", overrides);
   }catch(e){}
-  try{
-    store.keys().filter(k => k.indexOf("wr:ev:") === 0).forEach(k => {
-      const ts = parseInt(k.split("@")[1], 10);
-      if(!isNaN(ts) && Date.now() - ts > 8*24*3600*1000) store.del(k);
-    });
-  }catch(e){}
-  function outerWinMinOf(a){
-    const l = FIRMS.filter(f => a.firms && a.firms[f.id]);
-    return (l.length ? Math.max(...l.map(f=>f.win)) : 5) * 60000;
-  }
 })();
 
 document.querySelectorAll(".chart-sym").forEach(b => b.addEventListener("click", () => mountChart(b.dataset.sym)));
 
 /* ---------- Boot ---------- */
-renderCockpit();
 renderMarketCal();
 mountChart(settings.chartSym || "XAU");
 loadFeed(false);

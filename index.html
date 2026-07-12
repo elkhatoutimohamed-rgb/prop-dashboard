@@ -46,7 +46,9 @@
     color:var(--ink);
     font-family:var(--body);
     font-size:15px;
-    padding:18px clamp(14px,3vw,34px) 40px;
+    /* env(safe-area-inset-top) hält Header/Feed-Pill unterhalb von Notch/Dynamic Island frei
+       (nur wirksam mit viewport-fit=cover, s. <meta name="viewport">) */
+    padding:calc(18px + env(safe-area-inset-top)) clamp(14px,3vw,34px) 40px;
     min-height:100vh;
     overflow-x:hidden;
   }
@@ -188,29 +190,15 @@
   .chart-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.74rem;color:var(--muted);padding:24px;line-height:1.7}
   .chart-box .tradingview-widget-container{position:absolute;inset:0}
 
-  /* ---------- TIMELINE ---------- */
-  .tl-body{padding:16px 26px 12px}
-  .tl-bar{position:relative;height:92px;border-radius:var(--r-md);
-    background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));
-    border:1px solid var(--stroke)}
-  .tl-tick{position:absolute;bottom:-26px;transform:translateX(-50%);font-family:var(--mono);font-size:.6rem;color:var(--muted)}
-  .tl-tick i{position:absolute;left:50%;bottom:24px;width:1px;height:92px;background:rgba(255,255,255,.06)}
-  .tl-zone{position:absolute;top:0;bottom:0;background:linear-gradient(180deg,rgba(255,69,58,.2),rgba(255,69,58,.05));
-    border-left:1px solid rgba(255,69,58,.4);border-right:1px solid rgba(255,69,58,.4)}
-  .tl-ev{position:absolute;transform:translateX(-50%);
-    font-family:var(--mono);font-weight:600;font-size:.6rem;letter-spacing:.02em;white-space:nowrap;
-    background:rgba(20,20,28,.9);color:var(--ink);border:1px solid var(--stroke2);border-radius:999px;
-    padding:4px 9px;transition:all .2s var(--ease);backdrop-filter:blur(8px)}
-  .tl-ev b{font-weight:700}
-  .tl-ev:hover{transform:translateX(-50%) translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.5);z-index:5}
-  .tl-ev.usd{color:#FF9C94;border-color:rgba(255,69,58,.55);background:rgba(50,12,10,.85)}
-  .tl-ev.past{opacity:.5;cursor:default}
-  .tl-ev.ov{border-style:dashed}
-  .tl-now{position:absolute;top:-10px;bottom:-8px;width:2px;background:linear-gradient(180deg,var(--gold2),rgba(245,183,0,.2));z-index:2;box-shadow:0 0 12px rgba(245,183,0,.7)}
-  .tl-now b{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.54rem;font-weight:700;letter-spacing:.12em;
-    background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1A1205;padding:2px 7px;border-radius:999px;animation:softPulse 1.6s ease-in-out infinite}
-  .tl-legend{font-size:.64rem;color:var(--muted);padding:22px 0 8px;letter-spacing:.03em}
-  .tl-legend b{color:#FF9C94}
+  /* ---------- NÄCHSTES RED FOLDER ---------- */
+  .ne-box{padding:22px 20px;border-radius:var(--r-md);text-align:center;
+    background:linear-gradient(160deg,rgba(245,183,0,.1),rgba(255,255,255,.02));border:1px solid rgba(245,183,0,.28)}
+  .ne-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .ne-title{font-family:var(--head);font-weight:700;font-size:clamp(1rem,2.4vw,1.35rem);line-height:1.2}
+  .ne-count{font-family:var(--mono);font-weight:700;font-size:clamp(2.3rem,7vw,3.3rem);letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:10px;
+    background:linear-gradient(90deg,#fff,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ne-when{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .ne-empty{font-size:.82rem;color:var(--muted);line-height:1.7;padding:8px 0}
 
   /* ---------- FF-LISTE ---------- */
   .filters{display:flex;gap:8px;flex-wrap:wrap}
@@ -450,20 +438,14 @@
   </div>
 </section>
 
-<!-- ================= TIMELINE ================= -->
+<!-- ================= NÄCHSTES RED FOLDER ================= -->
 <section class="card mb rv" style="animation-delay:.24s">
   <div class="card-head">
-    <h2><span class="dot"></span>Zeitstrahl <span class="hint" style="font-weight:500" id="tl-range-hint">· −12h → +12h · alle Währungen</span></h2>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <div class="filters" role="group" aria-label="Zeitstrahl-Zeitraum">
-        <button class="tl-mode" data-tlmode="24h">24h</button>
-        <button class="tl-mode" data-tlmode="week">Woche</button>
-      </div>
-    </div>
+    <h2><span class="dot"></span>Nächstes Red Folder</h2>
+    <span class="hint">Inkl. deiner Myfxbook-Hochstufungen (↑ Rot)</span>
   </div>
-  <div class="tl-body">
-    <div class="tl-bar" id="tl-bar"></div>
-    <div class="tl-legend">● Rot = USD (Gold · US30) · ● Hell = andere Währung · <b>Schattierung = ±5-Min-Zone um Red-Folder-Events</b> · Vergangene abgedunkelt</div>
+  <div class="card-body">
+    <div class="ne-box" id="next-event-body"></div>
   </div>
 </section>
 
@@ -498,7 +480,7 @@
   <section class="card rv myfx-panel" style="animation-delay:.36s">
     <div class="card-head">
       <h2><span class="dot"></span>Myfxbook · Live-Kalender</h2>
-      <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im Zeitstrahl.</span>
+      <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im "Nächstes Red Folder"-Countdown.</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget">🌙 Dark</button>
         <button id="btn-myfx-win" title="Falls das Widget nicht lädt: Kalender im eigenen Fenster">◱ Fenster</button>
@@ -729,8 +711,6 @@ const FEED_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json";
 const TZ = "Europe/Berlin";
 const REFRESH_COOLDOWN_MS = 60_000;
 const AUTO_REFRESH_MS = 30 * 60_000;
-const MAX_WIN_MS = 5 * 60_000;
-const TL_PAST = 12 * 3600_000, TL_FUT = 12 * 3600_000;
 
 const FALLBACK_EVENTS = [
   {title:"ISM Services PMI",      country:"USD", date:"07-06-2026", time:"2:00pm",  impact:"High",   forecast:"54.2",  previous:"54.5"},
@@ -762,17 +742,14 @@ ccyFilter = settings.ccyFilter || "ALL";
 
 let impFilter = "HIGH";
 impFilter = (settings.impFilter === "HM") ? "HM" : "HIGH";
-let tlMode = (settings.tlMode === "week") ? "week" : "24h";
 let mobileTab = (settings.mobileTab === "myfx") ? "myfx" : "ff";
 
 /* ---------- Zeit ---------- */
 const fmtTimeDE  = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,hour:"2-digit",minute:"2-digit"});
 const fmtClockDE = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"});
-const fmtClockNY = new Intl.DateTimeFormat("de-DE",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",second:"2-digit"});
 const fmtNYshort = new Intl.DateTimeFormat("de-DE",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit"});
 const fmtDayDE   = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,weekday:"long",day:"2-digit",month:"2-digit"});
 const fmtFullDE  = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,weekday:"short",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-const fmtTickDay = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,weekday:"short",day:"2-digit",month:"2-digit"});
 const pad = n => String(n).padStart(2,"0");
 function fmtCountdown(ms){
   if(ms < 0) ms = -ms;
@@ -907,7 +884,7 @@ async function loadFeed(manual){
     document.getElementById("offline-banner").style.display = "block";
   }finally{
     renderEvents();
-    renderTimeline();
+    renderNextEvent();
     fillTicker();
     if(icon) setTimeout(()=>{ icon.classList.remove("spinning"); }, 600);
   }
@@ -935,7 +912,7 @@ function toggleOverride(e){
   if(overrides[k]) delete overrides[k];
   else overrides[k] = e.ts;
   store.set("wr:overrides", overrides);
-  renderEvents(); renderTimeline();
+  renderEvents(); renderNextEvent();
 }
 function highEvents(){ return events.filter(e => effImpact(e) === "High"); }
 function clusterAt(ts, country){ return events.filter(e => effImpact(e) === "High" && e.ts === ts && e.country === country); }
@@ -1016,68 +993,22 @@ function mountChart(key){
 /* ---------- (Feed-Status läuft über setFeedStatus) ---------- */
 function fillTicker(){ /* no-op: Status wird in setFeedStatus gesetzt */ }
 
-/* ---------- Timeline ---------- */
-function renderTimeline(){
-  const el = document.getElementById("tl-bar"); if(!el) return;
+/* ---------- Nächstes Red Folder ---------- */
+function renderNextEvent(){
+  const body = document.getElementById("next-event-body"); if(!body) return;
   const now = Date.now();
-  let start, end;
-  if(tlMode === "week"){
-    const d = new Date(); d.setHours(0,0,0,0);
-    start = d.getTime() - d.getDay()*86400000;   /* FF-Woche: Sonntag 00:00 lokal */
-    end = start + 7*86400000;
-  }else{
-    start = now - TL_PAST; end = now + TL_FUT;
-  }
-  const span = end - start;
-  const pos = t => ((t - start) / span * 100);
-  const hint = document.getElementById("tl-range-hint");
-  if(hint) hint.textContent = tlMode === "week" ? "· FF-Woche So–Sa · alle Währungen" : "· −12h → +12h · alle Währungen";
   const seen = new Set();
-  const evs = highEvents().filter(e => e.ts >= start && e.ts <= end)
-    .filter(e => { const k = eventKey(e); if(seen.has(k)) return false; seen.add(k); return true; });
-  let html = "";
-  if(tlMode === "week"){
-    for(let t = start; t < end; t += 86400000){
-      html += '<span class="tl-tick" style="left:' + pos(t).toFixed(3) + '%"><i></i>' + fmtTickDay.format(new Date(t)) + '</span>';
-    }
-  }else{
-    let t0 = Math.ceil(start / 7200_000) * 7200_000;
-    for(let t = t0; t <= end; t += 7200_000){
-      html += '<span class="tl-tick" style="left:' + pos(t).toFixed(3) + '%"><i></i>' + fmtTimeDE.format(new Date(t)) + '</span>';
-    }
+  const nextEv = highEvents().filter(e => e.ts > now)
+    .find(e => { const k = eventKey(e); if(seen.has(k)) return false; seen.add(k); return true; });
+  if(!nextEv){
+    body.innerHTML = '<div class="ne-empty">Keine kommenden Red Folder im Feed dieser Woche. Der FF-Feed erneuert sich sonntags.</div>';
+    return;
   }
-  for(const e of evs){
-    const zl = pos(e.ts - MAX_WIN_MS), zw = pos(e.ts + MAX_WIN_MS) - zl;
-    html += '<span class="tl-zone" style="left:' + zl.toFixed(3) + '%;width:' + Math.max(zw, .35).toFixed(3) + '%"></span>';
-  }
-  /* Lane-Stacking: Events, die sich zeitlich zu nah sind, auf getrennte Ebenen versetzen */
-  const LANES = 3, MIN_GAP_PCT = tlMode === "week" ? 3.0 : 4.2;
-  const laneLastPos = new Array(LANES).fill(-Infinity);
-  const placed = [];
-  for(const e of evs){
-    const p = pos(e.ts);
-    let lane = 0;
-    while(lane < LANES && (p - laneLastPos[lane]) < MIN_GAP_PCT) lane++;
-    if(lane >= LANES) lane = LANES - 1;
-    laneLastPos[lane] = p;
-    placed.push({e, p, lane});
-  }
-  const laneTop = ["6px","32px","58px"];
-  for(const {e, p, lane} of placed){
-    const titles = clusterAt(e.ts, e.country).map(x=>x.title).join(" + ");
-    const past = e.ts < now;
-    const ov = isOverridden(e);
-    const tlTitle = esc(titles) + ' · ' + fmtTimeDE.format(new Date(e.ts)) + ' DE' + (ov ? ' · via Myfxbook-Override auf Rot hochgestuft' : '');
-    html += '<span class="tl-ev' + (e.country==="USD" ? " usd" : "") + (past ? " past" : "") + (ov ? " ov" : "") + '"'
-      + ' style="left:' + p.toFixed(3) + '%;top:' + laneTop[lane] + '"'
-      + ' title="' + tlTitle + '"'
-      + '><b>' + esc(e.country) + '</b> ' + fmtTimeDE.format(new Date(e.ts)) + (ov ? ' <span class="mfx-badge">MFX</span>' : '') + '</span>';
-  }
-  if(!evs.length){
-    html += '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted)">' + (tlMode === "week" ? "Keine Red Folder in dieser FF-Woche" : "Keine Red Folder im 12h-Fenster") + '</span>';
-  }
-  html += '<span class="tl-now" style="left:' + pos(now).toFixed(3) + '%"><b>NOW</b></span>';
-  el.innerHTML = html;
+  const titles = clusterAt(nextEv.ts, nextEv.country).map(x=>x.title).join(" + ");
+  body.innerHTML = '<div class="ne-row"><span class="ev-ccy' + (nextEv.country==="USD"?" usd":"") + '">' + esc(nextEv.country) + '</span>'
+    + '<span class="ne-title">' + esc(titles) + '</span></div>'
+    + '<div class="ne-count" id="ne-count" data-ts="' + nextEv.ts + '">--:--:--</div>'
+    + '<div class="ne-when">' + fmtFullDE.format(new Date(nextEv.ts)) + ' Uhr · ' + fmtNYshort.format(new Date(nextEv.ts)) + ' NY</div>';
 }
 
 /* ---------- FF-Liste ---------- */
@@ -1136,6 +1067,12 @@ function tick(){
   const nowDate = new Date();
   clockDeEl.textContent = fmtClockDE.format(nowDate);
   renderSessions(nowDate);
+  const ne = document.getElementById("ne-count");
+  if(ne){
+    const diff = parseInt(ne.dataset.ts, 10) - nowDate.getTime();
+    if(diff <= 0) renderNextEvent();
+    else ne.textContent = "T−" + fmtCountdown(diff);
+  }
 }
 
 /* ---------- Filter & Refresh ---------- */
@@ -1157,14 +1094,6 @@ document.querySelectorAll(".imp-filter").forEach(b => b.addEventListener("click"
   renderEvents();
 }));
 document.querySelectorAll(".imp-filter").forEach(b => b.classList.toggle("active", b.dataset.imp === impFilter));
-document.querySelectorAll(".tl-mode").forEach(b => b.addEventListener("click", () => {
-  tlMode = (b.dataset.tlmode === "week") ? "week" : "24h";
-  settings.tlMode = tlMode;
-  store.set("wr:settings", settings);
-  document.querySelectorAll(".tl-mode").forEach(x => x.classList.toggle("active", x.dataset.tlmode === tlMode));
-  renderTimeline();
-}));
-document.querySelectorAll(".tl-mode").forEach(b => b.classList.toggle("active", b.dataset.tlmode === tlMode));
 /* Mobile-Tabs: unter 980px werden FF/Myfxbook per Reiter statt nebeneinander gezeigt (siehe CSS) */
 function applyMobileTab(){
   document.querySelectorAll(".fm-tab").forEach(x => {
@@ -1255,10 +1184,11 @@ document.querySelectorAll(".rc-chevron").forEach(btn => btn.addEventListener("cl
 
 /* ---------- Boot ---------- */
 renderMarketCal();
+renderNextEvent();
 mountChart(settings.chartSym || "XAU");
 loadFeed(false);
 setInterval(tick, 1000);
-setInterval(() => { renderEvents(); renderTimeline(); }, 60_000);
+setInterval(() => { renderEvents(); renderNextEvent(); }, 60_000);
 setInterval(() => loadFeed(false), AUTO_REFRESH_MS);
 </script>
 </body>

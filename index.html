@@ -106,12 +106,18 @@
 
   /* ---------- HEADER ---------- */
   header{
+    position:relative;
     display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
     padding:16px 24px;margin-bottom:14px;
     background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid var(--stroke);border-radius:var(--r-lg);
     backdrop-filter:blur(24px) saturate(1.3);
     box-shadow:0 18px 50px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  @media(max-width:980px){
+    header{padding-top:14px}
+    .hdr-actions{position:absolute;top:14px;right:16px;z-index:5}
+    .hdr-actions .feed-pill{padding:6px 9px;font-size:.58rem;gap:6px}
   }
   .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .logo-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--amber));
@@ -283,10 +289,16 @@
   .rule-card.hard .rc-tag{color:#FF9C94;background:rgba(255,69,58,.14);border:1px solid rgba(255,69,58,.45)}
   .rule-card.soft .rc-tag{color:var(--gold2);background:rgba(245,183,0,.12);border:1px solid rgba(245,183,0,.45)}
   .rule-card.cut .rc-tag{color:#FFC66B;background:rgba(255,159,28,.13);border:1px solid rgba(255,159,28,.45)}
-  .rc-body{font-size:.7rem;color:var(--muted);line-height:1.7;padding:10px 18px 14px;flex:1;overflow-wrap:break-word}
+  .rc-body{font-size:.7rem;color:var(--muted);line-height:1.7;padding:10px 18px 14px;flex:1;overflow-wrap:break-word;display:none}
   .rc-body b{color:var(--ink);font-weight:600}
   .rc-body .hl{color:#FF9C94;font-weight:600}
-  .rc-link{margin:0 18px 18px}
+  .rc-link{margin:0 18px 18px;display:none}
+  .rc-chevron{position:absolute;top:14px;right:14px;width:30px;height:30px;padding:0;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1rem;line-height:1;color:var(--muted);
+    background:var(--glass2);border:1px solid var(--stroke2);transition:transform .3s var(--ease)}
+  .rule-card.open .rc-chevron{transform:rotate(180deg)}
+  .rule-card.open .rc-body,.rule-card.open .rc-link{display:block}
+  .rule-card.open .rc-link.link-pill{display:inline-flex}
   .rules-note{font-size:.68rem;color:var(--muted);line-height:1.7;margin:0 22px 22px;padding:14px 18px;border-radius:var(--r-md);
     background:var(--glass);border:1px dashed var(--stroke2);overflow-wrap:break-word}
   .rules-note b{color:#FF9C94}
@@ -375,10 +387,10 @@
     </div>
   </div>
   <div class="hdr-actions">
-    <span class="feed-pill" id="feed-pill" title="Feed-Status — klicken zum Aktualisieren">
+    <button class="feed-pill" id="feed-pill" type="button" title="Feed-Status — antippen zum Neu laden">
       <span class="led" id="feed-led"></span><span id="feed-status">Feed …</span>
-      <span class="feed-reload" id="btn-refresh" role="button" tabindex="0" aria-label="Feed aktualisieren">⟳</span>
-    </span>
+      <span class="feed-reload" id="feed-reload-icon" aria-hidden="true">⟳</span>
+    </button>
   </div>
 </header>
 
@@ -526,8 +538,7 @@
       </p>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button id="btn-pj-win" class="primary" style="padding:11px 22px">◱ Als Fenster öffnen</button>
-      <a class="link-pill" style="justify-content:center" href="https://payoutjunction.com" target="_blank" rel="noopener">Im Tab öffnen ↗</a>
+      <button id="btn-pj-win" class="primary" style="padding:11px 22px">◱ Öffnen</button>
       <a class="link-pill" style="justify-content:center" href="https://x.com/payoutjunction" target="_blank" rel="noopener">@payoutjunction auf X ↗</a>
     </div>
   </div>
@@ -540,6 +551,7 @@
   <div class="rules-grid">
 
     <div class="rule-card hard">
+      <button class="rc-chevron" aria-expanded="false" aria-label="Details ein-/ausklappen">⌄</button>
       <div class="rc-head">FTMO</div>
       <div class="rc-win">±2 Minuten · Hartes Fenster</div>
       <span class="rc-tag">Hard Breach</span>
@@ -553,6 +565,7 @@
     </div>
 
     <div class="rule-card soft">
+      <button class="rc-chevron" aria-expanded="false" aria-label="Details ein-/ausklappen">⌄</button>
       <div class="rc-head">The5ers</div>
       <div class="rc-win">±2 Minuten · Soft</div>
       <span class="rc-tag">Soft Breach</span>
@@ -566,6 +579,7 @@
     </div>
 
     <div class="rule-card soft">
+      <button class="rc-chevron" aria-expanded="false" aria-label="Details ein-/ausklappen">⌄</button>
       <div class="rc-head">Alpha Capital</div>
       <div class="rc-win">±2–5 Minuten · Alpha Pro</div>
       <span class="rc-tag">Soft Breach</span>
@@ -578,6 +592,7 @@
     </div>
 
     <div class="rule-card cut">
+      <button class="rc-chevron" aria-expanded="false" aria-label="Details ein-/ausklappen">⌄</button>
       <div class="rc-head">FundingPips</div>
       <div class="rc-win">±5 Minuten · Master</div>
       <span class="rc-tag">Profit-Abzug</span>
@@ -591,6 +606,7 @@
     </div>
 
     <div class="rule-card cut">
+      <button class="rc-chevron" aria-expanded="false" aria-label="Details ein-/ausklappen">⌄</button>
       <div class="rc-head">FundedNext</div>
       <div class="rc-win">±5 Minuten · 40%-Regel</div>
       <span class="rc-tag">40% Profit</span>
@@ -847,45 +863,65 @@ function renderSessions(nowDate){
 }
 
 /* ---------- Feed ---------- */
-async function loadFeed(manual){
-  const btn = document.getElementById("btn-refresh");
-  const now = Date.now();
-  if(manual && now - lastFetch < REFRESH_COOLDOWN_MS) return;
-  lastFetch = now;
-  if(btn) btn.classList.add("spinning");
+/* Der FF-Feed-Server schickt keine CORS-Header — im Browser/PWA blockt das jeden
+   direkten fetch() (Electron über file:// ist davon nicht betroffen). Deshalb:
+   1) direkter Live-Fetch versuchen, 2) same-origin Snapshot versuchen (wird von
+   einer GitHub Action alle ~20 Min aus dem Feed aktualisiert, kein CORS-Problem
+   da gleiche Origin), 3) zuletzt erfolgreich geladene bzw. hart codierte Events. */
+async function fetchFeedJson(url){
   try{
-    const res = await fetch(FEED_URL,{cache:"no-store"});
-    if(!res.ok) throw new Error("HTTP " + res.status);
-    const raw = await res.json();
-    if(!Array.isArray(raw)) throw new Error("Unerwartetes Format");
-    events = raw
-      .map(parseFeedEvent)
-      .filter(e => e && !Number.isNaN(e.ts))
-      .sort((a,b) => a.ts - b.ts);
-    if(events.length === 0) throw new Error("Feed leer nach Parsing");
+    const res = await fetch(url, {cache:"no-store"});
+    if(!res.ok) return null;
+    const data = await res.json();
+    return Array.isArray(data) ? data : null;
+  }catch(e){ return null; }
+}
+async function loadFeed(manual){
+  const icon = document.getElementById("feed-reload-icon");
+  if(icon) icon.classList.add("spinning");
+  const now = Date.now();
+  if(manual && now - lastFetch < REFRESH_COOLDOWN_MS){
+    if(icon) setTimeout(()=>{ icon.classList.remove("spinning"); }, 400);
+    return;
+  }
+  lastFetch = now;
+  try{
+    let raw = await fetchFeedJson(FEED_URL);
+    let live = true;
+    if(!raw){ raw = await fetchFeedJson("feed-cache.json"); live = false; }
+    if(!raw) throw new Error("Kein Feed erreichbar");
+    const parsed = raw.map(parseFeedEvent).filter(e => e && !Number.isNaN(e.ts)).sort((a,b) => a.ts - b.ts);
+    if(parsed.length === 0) throw new Error("Feed leer nach Parsing");
+    events = parsed;
     usingFallback = false;
-    setFeedStatus(true, "FF LIVE · " + fmtTimeDE.format(new Date()));
+    setFeedStatus(true, live ? "Live" : "Snapshot",
+      (live ? "FF Live · " : "FF Snapshot (Auto-Update alle ~20 Min) · ") + fmtTimeDE.format(new Date()));
     document.getElementById("offline-banner").style.display = "none";
   }catch(err){
     if(events.length === 0){
       events = FALLBACK_EVENTS.map(parseFeedEvent).filter(e => e && !Number.isNaN(e.ts)).sort((a,b)=>a.ts-b.ts);
       usingFallback = true;
     }
-    setFeedStatus(false, usingFallback ? "FALLBACK" : "CACHE");
+    setFeedStatus(false, usingFallback ? "Fallback" : "Cache",
+      usingFallback ? "Beispieldaten — kein Feed erreichbar" : "Letzter erfolgreicher Abruf — Feed aktuell nicht erreichbar");
     document.getElementById("offline-banner").style.display = "block";
   }finally{
     renderEvents();
     renderTimeline();
     fillTicker();
-    if(btn) setTimeout(()=>{ btn.classList.remove("spinning"); }, 600);
+    if(icon) setTimeout(()=>{ icon.classList.remove("spinning"); }, 600);
   }
 }
-function setFeedStatus(ok, text){
+function setFeedStatus(ok, label, detail){
   const led = document.getElementById("feed-led");
   const pill = document.getElementById("feed-pill");
   led.className = "led " + (ok ? "on" : "stale");
-  if(pill){ pill.classList.toggle("live", ok); pill.classList.toggle("stale", !ok); }
-  document.getElementById("feed-status").textContent = ok ? "Live" : "Fallback";
+  if(pill){
+    pill.classList.toggle("live", ok);
+    pill.classList.toggle("stale", !ok);
+    pill.title = detail + " — antippen zum Neu laden";
+  }
+  document.getElementById("feed-status").textContent = label;
 }
 
 /* ---------- Myfxbook-Override: Events, die FF orange führt, Myfxbook aber rot ---------- */
@@ -1193,8 +1229,7 @@ document.getElementById("btn-pj-win").addEventListener("click", () => {
     + 'Darstellung &amp; Farben sind payoutjunction.com-Original; ein eigener lesbarer Dark-Skin per CSS-Injection ist der nächste App-Schritt. '
     + 'Einordnung: FTMO zahlt nicht via Rise und fehlt dort · Wallet-Summen können auch andere Betriebsausgaben enthalten.';
 })();
-document.getElementById("btn-refresh").addEventListener("click", (e) => { e.stopPropagation(); loadFeed(true); });
-document.getElementById("btn-refresh").addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); loadFeed(true); } });
+document.getElementById("feed-pill").addEventListener("click", () => loadFeed(true));
 
 /* ---------- Hydration: alte Fokus/Alarm-Reste aus localStorage räumen, Override-Aufräumung ---------- */
 (function cleanup(){
@@ -1210,6 +1245,13 @@ document.getElementById("btn-refresh").addEventListener("keydown", (e) => { if(e
 })();
 
 document.querySelectorAll(".chart-sym").forEach(b => b.addEventListener("click", () => mountChart(b.dataset.sym)));
+
+/* Regel-Karten: einzeln auf-/zuklappbar statt alle Details auf einmal zu zeigen */
+document.querySelectorAll(".rc-chevron").forEach(btn => btn.addEventListener("click", () => {
+  const card = btn.closest(".rule-card");
+  const open = card.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open ? "true" : "false");
+}));
 
 /* ---------- Boot ---------- */
 renderMarketCal();

@@ -156,7 +156,16 @@
 
   /* ---------- LAYOUT ---------- */
   .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:26px;align-items:start}
-  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  .ff-myfx-tabs{display:none;gap:8px;margin-bottom:16px}
+  .fm-tab{flex:1;padding:11px;font-size:.76rem}
+  .fm-tab.active{background:linear-gradient(135deg,var(--gold),var(--amber));color:#1A1205;border:none;font-weight:700;box-shadow:0 4px 16px rgba(245,183,0,.3)}
+  @media(max-width:980px){
+    .grid{grid-template-columns:1fr}
+    .ff-myfx-tabs{display:flex}
+    .grid .ff-panel,.grid .myfx-panel{display:none}
+    .grid.tab-ff .ff-panel{display:block}
+    .grid.tab-myfx .myfx-panel{display:block}
+  }
   .mb{margin-bottom:26px}
 
   /* ---------- BANNER ---------- */
@@ -447,9 +456,13 @@
 </section>
 
 <!-- ================= FF LISTE + MYFXBOOK ================= -->
-<div class="grid">
+<div class="ff-myfx-tabs" role="tablist" aria-label="Kalender-Ansicht">
+  <button class="fm-tab active" data-tab="ff" role="tab" aria-selected="true">ForexFactory</button>
+  <button class="fm-tab" data-tab="myfx" role="tab" aria-selected="false">Myfxbook</button>
+</div>
+<div class="grid tab-ff" id="ff-myfx-grid">
 
-  <section class="card rv" style="animation-delay:.3s">
+  <section class="card rv ff-panel" style="animation-delay:.3s">
     <div class="card-head">
       <h2><span class="dot"></span>ForexFactory · Live-Kalender</h2>
       <span class="hint" style="flex-basis:100%;order:9">Myfxbook stuft rot ein, FF nur orange? Filter <b>🔴🟠</b> wählen &rarr; <b style="color:#FF9C94">↑ Rot</b> am Event klicken &mdash; es z&auml;hlt dann &uuml;berall als Red Folder.</span>
@@ -470,7 +483,7 @@
     </div>
   </section>
 
-  <section class="card rv" style="animation-delay:.36s">
+  <section class="card rv myfx-panel" style="animation-delay:.36s">
     <div class="card-head">
       <h2><span class="dot"></span>Myfxbook · Live-Kalender</h2>
       <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im Zeitstrahl.</span>
@@ -734,6 +747,7 @@ ccyFilter = settings.ccyFilter || "ALL";
 let impFilter = "HIGH";
 impFilter = (settings.impFilter === "HM") ? "HM" : "HIGH";
 let tlMode = (settings.tlMode === "week") ? "week" : "24h";
+let mobileTab = (settings.mobileTab === "myfx") ? "myfx" : "ff";
 
 /* ---------- Zeit ---------- */
 const fmtTimeDE  = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,hour:"2-digit",minute:"2-digit"});
@@ -1115,6 +1129,24 @@ document.querySelectorAll(".tl-mode").forEach(b => b.addEventListener("click", (
   renderTimeline();
 }));
 document.querySelectorAll(".tl-mode").forEach(b => b.classList.toggle("active", b.dataset.tlmode === tlMode));
+/* Mobile-Tabs: unter 980px werden FF/Myfxbook per Reiter statt nebeneinander gezeigt (siehe CSS) */
+function applyMobileTab(){
+  document.querySelectorAll(".fm-tab").forEach(x => {
+    const on = x.dataset.tab === mobileTab;
+    x.classList.toggle("active", on);
+    x.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  const grid = document.getElementById("ff-myfx-grid");
+  grid.classList.toggle("tab-ff", mobileTab === "ff");
+  grid.classList.toggle("tab-myfx", mobileTab === "myfx");
+}
+document.querySelectorAll(".fm-tab").forEach(b => b.addEventListener("click", () => {
+  mobileTab = b.dataset.tab;
+  settings.mobileTab = mobileTab;
+  store.set("wr:settings", settings);
+  applyMobileTab();
+}));
+applyMobileTab();
 /* Event-Delegation statt Re-Bind bei jedem renderEvents() (läuft alle 60s + bei jedem Feed-Reload) */
 document.getElementById("event-list").addEventListener("click", (e) => {
   const ovBtn = e.target.closest("[data-ov]");

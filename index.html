@@ -650,6 +650,7 @@
   <section class="card rv" style="animation-delay:.36s">
     <div class="card-head">
       <h2><span class="dot"></span>Myfxbook · Live-Kalender</h2>
+      <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im Zeitstrahl &amp; Cockpit.</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget">🌙 Dark</button>
         <button id="btn-myfx-win" title="Falls das Widget nicht lädt: Kalender im eigenen Fenster">◱ Fenster</button>
@@ -1554,11 +1555,13 @@ function renderTimeline(){
     const titles = clusterAt(e.ts, e.country).map(x=>x.title).join(" + ");
     const past = e.ts < now;
     const isArmed = armed && armed.key === eventKey(e);
-    html += '<button class="tl-ev' + (e.country==="USD" ? " usd" : "") + (past ? " past" : "") + (isArmed ? " armed" : "") + (isOverridden(e) ? " ov" : "") + '"'
+    const ov = isOverridden(e);
+    const tlTitle = esc(titles) + ' · ' + fmtTimeDE.format(new Date(e.ts)) + ' DE' + (ov ? ' · via Myfxbook-Override auf Rot hochgestuft' : '');
+    html += '<button class="tl-ev' + (e.country==="USD" ? " usd" : "") + (past ? " past" : "") + (isArmed ? " armed" : "") + (ov ? " ov" : "") + '"'
       + ' style="left:' + p.toFixed(3) + '%;top:' + laneTop[lane] + '"'
-      + ' title="' + esc(titles) + ' · ' + fmtTimeDE.format(new Date(e.ts)) + ' DE"'
+      + ' title="' + tlTitle + '"'
       + (past ? ' disabled' : '')
-      + ' data-tlts="' + e.ts + '" data-tlccy="' + esc(e.country) + '"><b>' + esc(e.country) + '</b> ' + fmtTimeDE.format(new Date(e.ts)) + '</button>';
+      + ' data-tlts="' + e.ts + '" data-tlccy="' + esc(e.country) + '"><b>' + esc(e.country) + '</b> ' + fmtTimeDE.format(new Date(e.ts)) + (ov ? ' <span class="mfx-badge">MFX</span>' : '') + '</button>';
   }
   if(!evs.length){
     html += '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted)">' + (tlMode === "week" ? "Keine Red Folder in dieser FF-Woche" : "Keine Red Folder im 12h-Fenster") + '</span>';

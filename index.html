@@ -190,8 +190,12 @@
   .chart-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.74rem;color:var(--muted);padding:24px;line-height:1.7}
   .chart-box .tradingview-widget-container{position:absolute;inset:0}
 
-  /* ---------- NÄCHSTES RED FOLDER ---------- */
-  #next-event-card .card-head h2 .dot{background:linear-gradient(135deg,var(--red),#FF8A80);box-shadow:0 0 12px rgba(255,69,58,.8)}
+  /* ---------- CARD-DOT FARBEN ---------- */
+  #chart-card .card-head h2 .dot,
+  #pj-card .card-head h2 .dot{background:linear-gradient(135deg,var(--green),#7FF0B2);box-shadow:0 0 12px rgba(48,217,123,.8)}
+  #next-event-card .card-head h2 .dot,
+  #news-rules-card .card-head h2 .dot,
+  #radar-card .card-head h2 .dot{background:linear-gradient(135deg,var(--red),#FF8A80);box-shadow:0 0 12px rgba(255,69,58,.8)}
   .ne-box{padding:22px 20px;border-radius:var(--r-md);text-align:center;
     background:linear-gradient(160deg,rgba(255,69,58,.1),rgba(255,255,255,.02));border:1px solid rgba(255,69,58,.28)}
   .ne-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
@@ -412,7 +416,7 @@
 <main>
 
 <!-- ================= CHART ================= -->
-<section class="card mb rv" style="animation-delay:.12s">
+<section class="card mb rv" id="chart-card" style="animation-delay:.12s">
   <div class="card-head">
     <h2><span class="dot"></span>Live Chart</h2>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -518,7 +522,7 @@
 </section>
 
 <!-- ================= PAYOUT JUNCTION ================= -->
-<section class="card mb rv" style="animation-delay:.42s">
+<section class="card mb rv" id="pj-card" style="animation-delay:.42s">
   <div class="card-head">
     <h2><span class="dot"></span>Payout Junction · Live-Payouts</h2>
   </div>
@@ -542,7 +546,7 @@
 </section>
 
 <!-- ================= RULE CARDS ================= -->
-<section class="card rv" style="animation-delay:.48s">
+<section class="card rv" id="news-rules-card" style="animation-delay:.48s">
   <div class="card-head"><h2><span class="dot"></span>News-Regel-Matrix · Funded / Master</h2></div>
   <div class="rules-grid">
 
@@ -621,7 +625,7 @@
 </section>
 
 <!-- ================= REGEL-RADAR ================= -->
-<section class="card rv" style="animation-delay:.5s">
+<section class="card rv" id="radar-card" style="animation-delay:.5s">
   <div class="card-head">
     <h2><span class="dot"></span>Regel-Radar &middot; Konto-Limits</h2>
     <span class="hint">Funded / Master &middot; Stand 14.07.2026</span>

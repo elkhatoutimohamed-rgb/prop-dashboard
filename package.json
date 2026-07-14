@@ -2,9 +2,9 @@
   "name": "prop-dashboard-flenkenz",
   "productName": "Prop Dashboard",
   "version": "1.2.0",
-  "description": "Prop Dashboard by Flenkenz — Trading-Dashboard als Windows-Desktop-App / PWA",
+  "description": "Prop Dashboard by Mohamed aka Flenkenz — Trading-Dashboard als Windows-Desktop-App / PWA",
   "main": "main.js",
-  "author": "Flenkenz",
+  "author": "Mohamed aka Flenkenz",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {

@@ -1,6 +1,6 @@
 "use strict";
 /* ============================================================
-   Prop Dashboard by Flenkenz — Electron Main Process (v1.1)
+   Prop Dashboard by Mohamed aka Flenkenz — Electron Main Process (v1.1)
    - Lädt index.html als Desktop-App (randlos wie App-Modus)
    - Strg+Alt+T: Always-on-top an/aus (📌 in der Titelleiste)
    - backgroundThrottling AUS → Alarme feuern sekundengenau,
@@ -20,7 +20,7 @@ let win = null;
 let pinned = false;
 
 function setTitle() {
-  if (win) win.setTitle((pinned ? "📌 " : "") + "Prop Dashboard by Flenkenz");
+  if (win) win.setTitle((pinned ? "📌 " : "") + "Prop Dashboard by Mohamed aka Flenkenz");
 }
 
 function createWindow() {
@@ -31,7 +31,7 @@ function createWindow() {
     minHeight: 700,
     backgroundColor: "#08080D",
     autoHideMenuBar: true,
-    title: "Prop Dashboard by Flenkenz",
+    title: "Prop Dashboard by Mohamed aka Flenkenz",
     webPreferences: {
       backgroundThrottling: false, // Alarme laufen auch im Hintergrund exakt
       contextIsolation: true,

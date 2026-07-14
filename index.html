@@ -207,8 +207,9 @@
     color:var(--ink);font-family:var(--body);font-size:.8rem;padding:8px 10px}
   .ne-manual-form input[type="text"]{flex:1;min-width:130px}
   .ne-manual-form input[type="datetime-local"]{color-scheme:dark}
+  .ne-manual-tags{display:flex;flex-wrap:wrap;gap:8px}
   .ne-manual-tag{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;color:var(--muted);
-    background:var(--glass2);border:1px solid var(--stroke2);border-radius:999px;padding:5px 12px;margin-top:12px}
+    background:var(--glass2);border:1px solid var(--stroke2);border-radius:999px;padding:5px 12px}
   .ne-manual-tag button{padding:2px 8px;font-size:.62rem;border-radius:999px}
 
   /* ---------- FF-LISTE ---------- */
@@ -445,6 +446,7 @@
       <input type="text" id="nm-title" placeholder="Titel, z.B. CPI m/m">
       <input type="datetime-local" id="nm-when">
       <button id="nm-submit" class="primary">Hinzufügen</button>
+      <div class="ne-manual-tags" id="ne-manual-tags" style="flex-basis:100%"></div>
     </div>
     <div class="ne-box" id="next-event-body"></div>
   </div>
@@ -910,6 +912,7 @@ async function loadFeed(manual){
     mergeManualEvents();
     renderEvents();
     renderNextEvent();
+    renderManualTags();
     fillTicker();
     if(icon) setTimeout(()=>{ icon.classList.remove("spinning"); }, 600);
   }
@@ -953,13 +956,21 @@ function addManualEvent(country, title, ts){
   manualEvents.push({id: country + "@" + ts + "|" + title + "|" + Date.now(), country, title, ts});
   store.set("wr:manual", manualEvents);
   mergeManualEvents();
-  renderEvents(); renderNextEvent();
+  renderEvents(); renderNextEvent(); renderManualTags();
 }
 function removeManualEvent(id){
   manualEvents = manualEvents.filter(m => m.id !== id);
   store.set("wr:manual", manualEvents);
   mergeManualEvents();
-  renderEvents(); renderNextEvent();
+  renderEvents(); renderNextEvent(); renderManualTags();
+}
+function renderManualTags(){
+  const box = document.getElementById("ne-manual-tags"); if(!box) return;
+  if(!manualEvents.length){ box.innerHTML = ""; return; }
+  box.innerHTML = manualEvents.slice().sort((a,b) => a.ts - b.ts).map(m =>
+    '<span class="ne-manual-tag">' + esc(m.country) + ' &middot; ' + esc(m.title) + ' &middot; ' + fmtFullDE.format(new Date(m.ts))
+    + ' <button data-manual-del="' + esc(m.id) + '" title="Manuellen Eintrag löschen">✕</button></span>'
+  ).join("");
 }
 function highEvents(){ return events.filter(e => effImpact(e) === "High"); }
 function clusterAt(ts, country){ return events.filter(e => effImpact(e) === "High" && e.ts === ts && e.country === country); }
@@ -1029,6 +1040,10 @@ document.getElementById("nm-submit").addEventListener("click", () => {
   addManualEvent(ccy, title, ts);
   ccyEl.value = ""; titleEl.value = ""; whenEl.value = "";
   document.getElementById("ne-manual-form").classList.remove("open");
+});
+document.getElementById("ne-manual-tags").addEventListener("click", (e) => {
+  const delBtn = e.target.closest("[data-manual-del]");
+  if(delBtn) removeManualEvent(delBtn.dataset.manualDel);
 });
 
 /* ---------- Chart (TradingView, umschaltbar) ---------- */

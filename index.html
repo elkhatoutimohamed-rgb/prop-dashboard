@@ -319,10 +319,8 @@
   .mk-strip.soon{border-color:rgba(255,159,28,.5);background:linear-gradient(90deg,rgba(255,159,28,.12),rgba(255,255,255,.02))}
   .mk-label{font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
   .mk-strip.soon .mk-label{color:#FFC66B}
-  .mk-main{flex:1;min-width:200px;font-size:.8rem;color:var(--ink)}
-  .mk-main b{color:var(--gold2)}
-  .mk-strip.soon .mk-main b{color:#FFC66B}
   .mk-days{font-family:var(--mono);font-weight:700;font-size:.8rem;color:var(--muted);white-space:nowrap}
+  .mk-strip.soon .mk-days{color:#FFC66B}
   .mk-list{display:none;flex-direction:column;gap:6px;padding:0 18px 16px}
   .mk-list.open{display:flex}
   .mk-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 12px;border-radius:var(--r-sm);
@@ -398,7 +396,7 @@
 </div>
 
 <div class="banner" id="offline-banner">
-  <b>⚠ Fallback-Daten — Feed nicht erreichbar.</b> Kalender nicht aktuell; vor Trades manuell prüfen. Am Privatrechner läuft der Live-Feed.
+  <b>⚠ Fallback-Daten — Feed nicht erreichbar.</b> Kalender nicht aktuell, vor Trades manuell prüfen.
 </div>
 
 <main>
@@ -417,7 +415,7 @@
     </div>
   </div>
   <div class="chart-box">
-    <div class="chart-fallback">Chart lädt nur in der lokal geöffneten Datei<br>(TradingView-Embed — Sandbox blockiert externe Scripts)</div>
+    <div class="chart-fallback">Chart konnte nicht geladen werden — bitte Seite neu laden.</div>
     <div id="chart-mount" style="position:absolute;inset:0"></div>
   </div>
 </section>
@@ -446,14 +444,14 @@
       <span class="hint" style="flex-basis:100%;order:9">Myfxbook stuft rot ein, FF nur orange? Filter <b>🔴🟠</b> wählen &rarr; <b style="color:#FF9C94">↑ Rot</b> am Event klicken &mdash; es z&auml;hlt dann &uuml;berall als Red Folder.</span>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <div class="filters" role="group" aria-label="Impact-Filter">
-          <button data-imp="HM" class="imp-filter" title="Rote + orange News" aria-label="Rote und orange News"><span class="fdot red"></span><span class="fdot orange"></span></button>
           <button data-imp="HIGH" class="imp-filter active" title="Nur rote News (Red Folder)" aria-label="Nur rote News"><span class="fdot red"></span></button>
+          <button data-imp="HM" class="imp-filter" title="Rote + orange News" aria-label="Rote und orange News"><span class="fdot red"></span><span class="fdot orange"></span></button>
         </div>
         <div class="filters">
           <button data-ccy="ALL" class="ccy-filter active">Alle Währungen</button>
           <button data-ccy="USD" class="ccy-filter">Nur USD</button>
         </div>
-        <button id="btn-ff-win" title="ForexFactory-Original in eigenem Fenster">◱ FF-Fenster</button>
+        <button id="btn-ff-win" title="ForexFactory-Original in eigenem Fenster">◱ Originalseite öffnen</button>
       </div>
     </div>
     <div class="list-scroll" id="event-list">
@@ -467,19 +465,18 @@
       <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im "Nächstes Red Folder"-Countdown.</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget">🌙 Dark</button>
-        <button id="btn-myfx-win" title="Falls das Widget nicht lädt: Kalender im eigenen Fenster">◱ Fenster</button>
-        <a class="link-pill" href="https://www.myfxbook.com/forex-economic-calendar" target="_blank" rel="noopener">Tab ↗</a>
+        <button id="btn-myfx-reload" title="Widget neu laden — hilft, wenn der Währungsfilter hängen bleibt">🔄 Neu laden</button>
+        <button id="btn-myfx-win" title="Myfxbook-Original in eigenem Fenster">◱ Originalseite öffnen</button>
       </div>
     </div>
     <div class="frame-wrap myfx-dark" id="myfx-frame" style="min-height:640px">
       <!-- myfxbook.com Economic Calendar Widget - Start -->
-      <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=3&symbols=AED,AFN,ALL,AMD,ANG,AOA,ARS,AUD,AWG,AZN,BAM,BBD,BDT,BGN,BHD,BIF,BMD,BND,BOB,BRL,BSD,BTN,BWP,BYN,BZD,CAD,CDF,CHF,CLP,CNY,COP,CRC,CUC,CVE,CZK,DJF,DKK,DOP,DZD,EGP,ERN,ETB,EUR,FJD,FKP,GBP,GEL,GHS,GIP,GMD,GNF,GTQ,GYD,HKD,HNL,HRK,HTG,HUF,IDR,ILS,INR,IQD,IRR,ISK,JMD,JOD,JPY,KES,KGS,KHR,KMF,KPW,KRW,KWD,KYD,KZT,LAK,LBP,LKR,LRD,LSL,LYD,MAD,MDL,MGA,MKD,MMK,MNT,MOP,MRO,MUR,MVR,MWK,MXN,MYR,MZN,NAD,NGN,NIO,NOK,NPR,NZD,OMR,PAB,PEN,PGK,PHP,PKR,PLN,PYG,QAR,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SLL,SOS,SRD,SSP,STD,SYP,SZL,THB,TJS,TMT,TND,TOP,TRY,TTD,TWD,TZS,UAH,UGX,USD,UYU,UZS,VEF,VND,VUV,WST,XAF,XCD,XOF,XPF,YER,ZAR,ZMW" style="border:0;width:100%;height:640px;display:block" loading="lazy" title="Myfxbook Wirtschaftskalender"></iframe>
+      <iframe id="myfx-iframe" src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=3&symbols=AED,AFN,ALL,AMD,ANG,AOA,ARS,AUD,AWG,AZN,BAM,BBD,BDT,BGN,BHD,BIF,BMD,BND,BOB,BRL,BSD,BTN,BWP,BYN,BZD,CAD,CDF,CHF,CLP,CNY,COP,CRC,CUC,CVE,CZK,DJF,DKK,DOP,DZD,EGP,ERN,ETB,EUR,FJD,FKP,GBP,GEL,GHS,GIP,GMD,GNF,GTQ,GYD,HKD,HNL,HRK,HTG,HUF,IDR,ILS,INR,IQD,IRR,ISK,JMD,JOD,JPY,KES,KGS,KHR,KMF,KPW,KRW,KWD,KYD,KZT,LAK,LBP,LKR,LRD,LSL,LYD,MAD,MDL,MGA,MKD,MMK,MNT,MOP,MRO,MUR,MVR,MWK,MXN,MYR,MZN,NAD,NGN,NIO,NOK,NPR,NZD,OMR,PAB,PEN,PGK,PHP,PKR,PLN,PYG,QAR,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SLL,SOS,SRD,SSP,STD,SYP,SZL,THB,TJS,TMT,TND,TOP,TRY,TTD,TWD,TZS,UAH,UGX,USD,UYU,UZS,VEF,VND,VUV,WST,XAF,XCD,XOF,XPF,YER,ZAR,ZMW" style="border:0;width:100%;height:640px;display:block" loading="lazy" title="Myfxbook Wirtschaftskalender"></iframe>
       <!-- myfxbook.com Economic Calendar Widget - End -->
     </div>
     <p class="panel-note">
-      Offizielles Myfxbook-Widget: <b>alle Währungen, nur High/Red Folder</b>, mit Actual-Werten in Echtzeit — dein Gegencheck zur FF-Einstufung links.
-      Läuft am zuverlässigsten am Privatrechner; im Firmennetz kann es blockiert sein — dann <b>◱ Fenster</b> nutzen.
-      Zeitzone im Widget einmal auf GMT+1 stellen (wird gemerkt).
+      Alle Währungen, nur High/Red Folder, mit Actual-Werten in Echtzeit — dein Gegencheck zur FF-Einstufung links.
+      Zeitzone im Widget einmal auf GMT+1 stellen (wird gemerkt). Hängt der Währungsfilter fest: <b>🔄 Neu laden</b> nutzen.
     </p>
   </section>
 
@@ -488,9 +485,8 @@
 <section class="card rv" style="animation-delay:.4s;margin-bottom:22px" id="mk-card">
   <div class="mk-strip" id="mk-strip">
     <span class="mk-label">Besondere Marktschließungen</span>
-    <span class="mk-main" id="mk-main">—</span>
     <span class="mk-days" id="mk-days"></span>
-    <button id="mk-toggle" style="padding:6px 12px;font-size:.66rem">Alle anzeigen</button>
+    <button id="mk-toggle" style="padding:6px 12px;font-size:.66rem;margin-left:auto">Alle anzeigen</button>
     <a class="link-pill" href="https://www.oanda.com/bvi-en/cfds/holiday-trading-hours/" target="_blank" rel="noopener">Broker-Zeiten ↗</a>
   </div>
   <div class="mk-list" id="mk-list"></div>
@@ -508,9 +504,7 @@
         Live-Check vor dem Payout-Request: <b style="color:var(--gold2)">Zahlt die Firma gerade aus?</b>
       </p>
       <p class="hint" id="pj-hint" style="margin-top:8px;line-height:1.7">
-        payoutjunction.com verbietet Einbettung serverseitig (X-Frame) — technisch für keine Seite umgehbar.
-        Der Fenster-Button öffnet es als eigenes schwebendes Browserfenster: auf dem Ultrawide neben das Dashboard legen, fertig.
-        Darstellung &amp; Farben im Fenster kommen von payoutjunction.com selbst — aus dem Browser nicht beeinflussbar; ein lesbarer Dark-Skin per CSS-Injection kommt mit dem Electron-Wrapper.
+        Öffnet Payout Junction in einem eigenen Fenster.
         Einordnung: FTMO zahlt nicht via Rise und fehlt dort · Wallet-Summen können auch andere Betriebsausgaben enthalten.
       </p>
     </div>
@@ -620,7 +614,8 @@
           <th>Daily</th>
           <th>Max</th>
           <th>Consist.</th>
-          <th>Min-Days</th>
+          <th>Min-Days Challenge</th>
+          <th>Min-Days Funded</th>
           <th>Weekend</th>
           <th>Risk/Trade</th>
         </tr>
@@ -633,6 +628,7 @@
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>4</td>
+          <td>14<span class="t-sub">Tage ab 1. Handelstag</span></td>
           <td class="c-bad">Nein</td>
           <td class="c-warn">Frei<span class="t-sub">&gt;1,5% = High-Risk-Flag</span></td>
         </tr>
@@ -643,6 +639,7 @@
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>3</td>
+          <td>14<span class="t-sub">Tage-Zyklus</span></td>
           <td class="c-good">Ja</td>
           <td class="c-good">Frei<span class="t-sub">sofern nicht restricted</span></td>
         </tr>
@@ -653,6 +650,7 @@
           <td class="c-bad">8 / 10%<span class="t-sub">static</span></td>
           <td class="c-warn">40%<span class="t-sub">nur On-Demand</span></td>
           <td>3</td>
+          <td>14<span class="t-sub">Tage-Zyklus</span></td>
           <td class="c-bad">Nein</td>
           <td class="c-good">Frei<span class="t-sub">sofern nicht restricted</span></td>
         </tr>
@@ -662,7 +660,8 @@
           <td class="c-bad">4%</td>
           <td class="c-bad">12%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
-          <td>0<span class="t-sub">4 bei 60%-Regel</span></td>
+          <td>0<span class="t-sub">3 bei 95%-Split</span></td>
+          <td>14<span class="t-sub">Tage ab 1. Trade auf Master</span></td>
           <td class="c-bad">Nein<span class="t-sub">seit 29.01.26</span></td>
           <td class="c-warn">2%<span class="t-sub">pro Trade, Funded</span></td>
         </tr>
@@ -673,6 +672,7 @@
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>5</td>
+          <td>14<span class="t-sub">Tage-Zyklus, kein Min.</span></td>
           <td class="c-bad">Nein</td>
           <td class="c-warn">3%<span class="t-sub">pro Trade, Funded</span></td>
         </tr>
@@ -680,23 +680,17 @@
     </table>
   </div>
 
-  <div class="rules-note" style="margin:6px 22px 22px">
-    <b>Equity</b> = floating Verluste z&auml;hlen sofort &middot; <b>Balance</b> = nur geschlossene Trades.
-    <b>FundingPips</b>: es z&auml;hlt der jeweils h&ouml;here Wert aus Equity und (Opening-)Balance &mdash; h&auml;lt man z.B. einen Trade &uuml;ber Nacht im Minus, greift zu dem Zeitpunkt die (h&ouml;here) Balance statt der Equity.
-    FundedNext: Gold-Leverage seit Jan 2026 auf 1:10.
-    <b>Daily/Max</b> sind harte Limits &mdash; jede &Uuml;berschreitung ist ein Breach, daher einheitlich rot markiert statt nach H&ouml;he bewertet.
-    <b>Risk/Trade</b> = Richtwerte, u.a. aus eigener Recherche &mdash; bei FTMO (informelles High-Risk-Flag) und ACG/5ers (abh&auml;ngig vom Restriktionsstatus) im Zweifel Support fragen.
-    Vor Payout offizielle FAQ pr&uuml;fen.
+  <div class="radar-flags">
+    <div class="flag-item"><b>Equity</b> = floating Verluste z&auml;hlen sofort &middot; <b>Balance</b> = nur geschlossene Trades.</div>
+    <div class="flag-item warn"><b>FundingPips:</b> beim Daily-Limit z&auml;hlt der jeweils h&ouml;here Wert aus Equity/Balance &mdash; h&auml;ltst du einen Trade &uuml;ber Nacht im Minus, greift die (h&ouml;here) Balance statt der Equity.</div>
+    <div class="flag-item"><b>FundedNext:</b> Gold-Leverage seit Jan 2026 auf 1:10.</div>
+    <div class="flag-item">Alle Angaben ohne Gew&auml;hr, Stand 12.07.2026 &mdash; vor Trade/Payout offizielle FAQ der jeweiligen Firma pr&uuml;fen.</div>
   </div>
 </section>
 
 </main>
 
 <footer class="rv" style="animation-delay:.54s">
-  <div>
-    Quellen: ForexFactory Weekly Feed · Myfxbook · TradingView · Payout Junction — Regeln verifiziert 10.07.2026 ·
-    FF-Zeiten: Europe/Berlin (Neuss) · Speicherung lokal (localStorage) · Kein Anlage-/Rechtsrat.
-  </div>
   <div class="xlinks">
     <a class="link-pill" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener">FF ↗</a>
     <a class="link-pill" href="https://www.myfxbook.com/forex-economic-calendar" target="_blank" rel="noopener">Myfxbook ↗</a>
@@ -940,25 +934,22 @@ const HOLIDAYS = [
 ];
 function renderMarketCal(){
   const strip = document.getElementById("mk-strip");
-  const mainEl = document.getElementById("mk-main");
   const daysEl = document.getElementById("mk-days");
   const listEl = document.getElementById("mk-list");
-  if(!strip || !mainEl) return;
+  if(!strip || !daysEl) return;
   const today = new Date(); today.setHours(0,0,0,0);
   const up = HOLIDAYS.map(h => ({...h, ts: Date.parse(h.d + "T00:00:00")}))
     .filter(h => h.ts >= today.getTime())
     .sort((a,b) => a.ts - b.ts);
   if(!up.length){
-    mainEl.textContent = "Keine Feiertage mehr im Kalender hinterlegt.";
-    daysEl.textContent = "";
+    daysEl.textContent = "Keine weiteren im Kalender";
     return;
   }
   const next = up[0];
   const days = Math.round((next.ts - today.getTime()) / 86400000);
   const soon = days <= 10;
   strip.classList.toggle("soon", soon);
-  mainEl.innerHTML = (soon ? "⚠ " : "") + "Nächster: <b>" + esc(next.name) + "</b> — " + esc(next.note);
-  daysEl.textContent = days === 0 ? "HEUTE" : days === 1 ? "in 1 Tag" : "in " + days + " Tagen";
+  daysEl.textContent = (soon ? "⚠ " : "") + (days === 0 ? "HEUTE" : days === 1 ? "in 1 Tag" : "in " + days + " Tagen");
   listEl.innerHTML = up.map(h => {
     const dd = new Date(h.ts);
     return '<div class="mk-row">'
@@ -1134,7 +1125,14 @@ document.getElementById("btn-ff-win").addEventListener("click", () => {
 });
 (function(){
   const openMyfx = () => window.open("https://www.myfxbook.com/forex-economic-calendar","myfxwin","width=1180,height=900");
-  ["btn-myfx-win","btn-myfx-win2"].forEach(id => { const b = document.getElementById(id); if(b) b.addEventListener("click", openMyfx); });
+  const winBtn = document.getElementById("btn-myfx-win");
+  if(winBtn) winBtn.addEventListener("click", openMyfx);
+  const myfxIframe = document.getElementById("myfx-iframe");
+  const myfxBaseSrc = myfxIframe ? myfxIframe.src : "";
+  const reloadBtn = document.getElementById("btn-myfx-reload");
+  if(reloadBtn && myfxIframe) reloadBtn.addEventListener("click", () => {
+    myfxIframe.src = myfxBaseSrc + (myfxBaseSrc.includes("?") ? "&" : "?") + "_r=" + Date.now();
+  });
   const darkBtn = document.getElementById("btn-myfx-dark");
   const frame = document.getElementById("myfx-frame");
   if(darkBtn && frame){
@@ -1163,8 +1161,7 @@ document.getElementById("btn-pj-win").addEventListener("click", () => {
   holder.style.display = "block";
   holder.appendChild(f);
   const hint = document.getElementById("pj-hint");
-  if(hint) hint.innerHTML = 'Direkt eingebettet — die Desktop-App entfernt den X-Frame-Header. '
-    + 'Darstellung &amp; Farben sind payoutjunction.com-Original; ein eigener lesbarer Dark-Skin per CSS-Injection ist der nächste App-Schritt. '
+  if(hint) hint.innerHTML = 'Live unten eingebettet. '
     + 'Einordnung: FTMO zahlt nicht via Rise und fehlt dort · Wallet-Summen können auch andere Betriebsausgaben enthalten.';
 })();
 document.getElementById("feed-pill").addEventListener("click", () => loadFeed(true));

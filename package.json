@@ -26,16 +26,10 @@
       "package.json"
     ],
     "win": {
-      "target": ["portable", "nsis"]
+      "target": ["portable"]
     },
     "portable": {
       "artifactName": "Prop-Dashboard-${version}-portable.exe"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "artifactName": "Prop-Dashboard-Setup-${version}.exe"
     }
   }
 }

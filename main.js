@@ -14,6 +14,13 @@
 const { app, BrowserWindow, session, shell, Menu } = require("electron");
 const path = require("path");
 
+// Portable Build (electron-builder setzt PORTABLE_EXECUTABLE_DIR): Einstellungen
+// (localStorage) neben die .exe legen statt versteckt in %APPDATA%, damit die
+// App wirklich portabel bleibt (z.B. auf einem USB-Stick).
+if (process.env.PORTABLE_EXECUTABLE_DIR) {
+  app.setPath("userData", path.join(process.env.PORTABLE_EXECUTABLE_DIR, "Prop Dashboard Daten"));
+}
+
 const CHILD_HOSTS = /^https:\/\/(www\.)?(forexfactory\.com|myfxbook\.com|payoutjunction\.com)\//i;
 
 let win = null;

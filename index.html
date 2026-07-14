@@ -345,6 +345,10 @@
   .mk-tag{font-size:.58rem;font-weight:700;letter-spacing:.05em;padding:3px 9px;border-radius:999px;white-space:nowrap}
   .mk-tag.closed{color:#FF9C94;background:rgba(255,69,58,.14);border:1px solid rgba(255,69,58,.4)}
   .mk-tag.early{color:#FFC66B;background:rgba(255,159,28,.13);border:1px solid rgba(255,159,28,.4)}
+  /* ---------- WÄHRUNGSRECHNER ---------- */
+  #fx-input{flex:1;min-width:160px;background:rgba(0,0,0,.3);border:1px solid var(--stroke);border-radius:var(--r-sm);
+    color:var(--ink);font-family:var(--mono);font-size:1rem;padding:11px 14px}
+  .fx-result{font-family:var(--mono);font-weight:700;font-size:1.3rem;color:var(--gold2);white-space:nowrap}
   footer{margin-top:26px;padding:18px 24px;border-radius:var(--r-lg);
     background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(18px);
     font-size:.68rem;color:var(--muted);line-height:1.8;
@@ -421,9 +425,8 @@
     <h2><span class="dot"></span>Live Chart</h2>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="filters">
-        <button class="chart-sym" data-sym="XAU">XAUUSD</button>
+        <button class="chart-sym" data-sym="XAU">Gold</button>
         <button class="chart-sym" data-sym="US30">US30</button>
-        <button class="chart-sym" data-sym="EUR">EURUSD</button>
         <button class="chart-sym" data-sym="BTC">BTCUSD</button>
       </div>
     </div>
@@ -519,6 +522,18 @@
     </div>
   </div>
   <div class="mk-list" id="mk-list"></div>
+</section>
+
+<!-- ================= WÄHRUNGSRECHNER ================= -->
+<section class="card rv" style="animation-delay:.41s;margin-bottom:22px" id="fx-card">
+  <div class="card-head">
+    <h2><span class="dot"></span>USD &rarr; EUR Rechner</h2>
+    <span class="hint" id="fx-rate-hint">Kurs wird geladen &hellip;</span>
+  </div>
+  <div class="card-body" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <input type="number" id="fx-input" placeholder="USD-Betrag" inputmode="decimal">
+    <div class="fx-result" id="fx-result">&mdash;</div>
+  </div>
 </section>
 
 <!-- ================= PAYOUT JUNCTION ================= -->
@@ -1046,8 +1061,31 @@ document.getElementById("ne-manual-tags").addEventListener("click", (e) => {
   if(delBtn) removeManualEvent(delBtn.dataset.manualDel);
 });
 
+/* ---------- USD → EUR Rechner ---------- */
+let fxRate = null;
+function updateFxResult(){
+  const val = parseFloat(document.getElementById("fx-input").value);
+  const out = document.getElementById("fx-result");
+  if(!fxRate || Number.isNaN(val)){ out.textContent = "—"; return; }
+  out.textContent = (val * fxRate).toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+}
+async function loadFxRate(){
+  const hint = document.getElementById("fx-rate-hint");
+  try{
+    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=EUR", {cache:"no-store"});
+    const data = await res.json();
+    fxRate = data && data.rates && data.rates.EUR;
+    hint.textContent = fxRate ? ("1 USD = " + fxRate.toFixed(4) + " € · Stand " + data.date) : "Kurs aktuell nicht verfügbar";
+  }catch(e){
+    hint.textContent = "Kurs aktuell nicht verfügbar";
+  }
+  updateFxResult();
+}
+document.getElementById("fx-input").addEventListener("input", updateFxResult);
+loadFxRate();
+
 /* ---------- Chart (TradingView, umschaltbar) ---------- */
-const CHART_SYMS = { XAU:{label:"XAUUSD", tv:"OANDA:XAUUSD"}, US30:{label:"US30", tv:"OANDA:US30USD"}, EUR:{label:"EURUSD", tv:"OANDA:EURUSD"}, BTC:{label:"BTCUSD", tv:"BITSTAMP:BTCUSD"} };
+const CHART_SYMS = { XAU:{label:"Gold", tv:"OANDA:XAUUSD"}, US30:{label:"US30", tv:"OANDA:US30USD"}, BTC:{label:"BTCUSD", tv:"BITSTAMP:BTCUSD"} };
 function mountChart(key){
   if(!CHART_SYMS[key]) key = "XAU";
   const box = document.getElementById("chart-mount"); if(!box) return;

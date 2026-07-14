@@ -318,8 +318,11 @@
   .c-bad{color:#FF9C94!important}
   .c-good .t-sub,.c-warn .t-sub,.c-bad .t-sub{color:var(--muted)}
   /* ---------- MARKTKALENDER ---------- */
-  .mk-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 20px;margin-bottom:22px;
+  .mk-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 20px;margin:18px;
     border-radius:var(--r-md);background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(18px)}
+  .mk-dropdown-btn{padding:0;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:.9rem;line-height:1}
+  .mk-chevron{display:inline-block;transition:transform .25s var(--ease)}
+  .mk-dropdown-btn.open .mk-chevron{transform:rotate(180deg)}
   .mk-strip.soon{border-color:rgba(255,159,28,.5);background:linear-gradient(90deg,rgba(255,159,28,.12),rgba(255,255,255,.02))}
   .mk-main-info{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .mk-label{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
@@ -431,7 +434,7 @@
   <div class="card-head">
     <h2><span class="dot"></span>Nächstes Red Folder</h2>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <span class="hint">Inkl. deiner Myfxbook-Hochstufungen (↑ Rot)</span>
+      <span class="hint">Myfxbook wird nicht automatisch berücksichtigt</span>
       <button id="btn-manual-toggle" style="padding:6px 12px;font-size:.62rem">+ Manuell ergänzen</button>
     </div>
   </div>
@@ -478,7 +481,7 @@
   <section class="card rv myfx-panel" style="animation-delay:.36s">
     <div class="card-head">
       <h2><span class="dot"></span>Myfxbook · Live-Kalender</h2>
-      <span class="hint" style="flex-basis:100%;order:9">Hier ein rotes Event, das links bei FF nur orange ist? Zurück zu FF, Filter <b>🔴🟠</b> wählen und dort <b style="color:#FF9C94">↑ Rot</b> klicken — zählt danach überall als Red Folder, auch im "Nächstes Red Folder"-Countdown.</span>
+      <span class="hint" style="flex-basis:100%;order:9">Reines Vergleichs-Widget — Myfxbook wird nicht automatisch berücksichtigt.</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget">🌙 Dark</button>
         <button id="btn-myfx-reload" title="Widget neu laden — hilft, wenn der Währungsfilter hängen bleibt">🔄 Neu laden</button>
@@ -505,8 +508,8 @@
       <span class="mk-days" id="mk-days"></span>
     </div>
     <div class="mk-actions">
-      <button id="mk-toggle" style="padding:6px 12px;font-size:.66rem">Alle anzeigen</button>
-      <a class="link-pill" href="https://www.oanda.com/bvi-en/cfds/holiday-trading-hours/" target="_blank" rel="noopener">Broker-Zeiten ↗</a>
+      <button id="mk-toggle" class="mk-dropdown-btn" title="Alle Termine anzeigen" aria-label="Alle Termine anzeigen" aria-expanded="false"><span class="mk-chevron">▾</span></button>
+      <a class="link-pill" href="https://www.oanda.com/bvi-en/cfds/holiday-trading-hours/" target="_blank" rel="noopener">Originalseite öffnen ↗</a>
     </div>
   </div>
   <div class="mk-list" id="mk-list"></div>
@@ -777,7 +780,7 @@ function fmtCountdown(ms){
     const d = Math.floor(h/24), rh = h%24;
     return d + (d === 1 ? " Tag " : " Tage ") + rh + " Std " + m + " Min";
   }
-  return pad(h) + ":" + pad(m) + ":" + pad(sec);
+  return h + " Std " + pad(m) + " Min " + pad(sec) + " Sek";
 }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
@@ -1002,12 +1005,17 @@ function renderMarketCal(){
       + '</div>';
   }).join("")
   + '<div class="mk-note" style="padding:8px 12px;font-size:.62rem;color:var(--muted);line-height:1.6">'
-  + 'Zeiten sind Richtwerte — der exakte Frühschluss hängt vom Broker ab. Vor dem Tag über „Broker-Zeiten" verifizieren.</div>';
+  + 'Zeiten sind Richtwerte — der exakte Frühschluss hängt vom Broker ab. Vor dem Tag über „Originalseite öffnen" verifizieren.</div>';
 }
 document.getElementById("mk-toggle").addEventListener("click", () => {
   const l = document.getElementById("mk-list");
+  const btn = document.getElementById("mk-toggle");
   const open = l.classList.toggle("open");
-  document.getElementById("mk-toggle").textContent = open ? "Zuklappen" : "Alle anzeigen";
+  btn.classList.toggle("open", open);
+  btn.setAttribute("aria-expanded", open);
+  const label = open ? "Termine einklappen" : "Alle Termine anzeigen";
+  btn.title = label;
+  btn.setAttribute("aria-label", label);
 });
 
 /* ---------- Manuelle Events wiring ---------- */

@@ -200,6 +200,16 @@
     background:linear-gradient(90deg,#fff,#FF8A80);-webkit-background-clip:text;background-clip:text;color:transparent}
   .ne-when{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
   .ne-empty{font-size:.82rem;color:var(--muted);line-height:1.7;padding:8px 0}
+  .ne-manual-form{display:none;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;padding:14px 16px;
+    border-radius:var(--r-md);background:var(--glass);border:1px dashed var(--stroke2)}
+  .ne-manual-form.open{display:flex}
+  .ne-manual-form input{background:rgba(0,0,0,.3);border:1px solid var(--stroke);border-radius:var(--r-sm);
+    color:var(--ink);font-family:var(--body);font-size:.8rem;padding:8px 10px}
+  .ne-manual-form input[type="text"]{flex:1;min-width:130px}
+  .ne-manual-form input[type="datetime-local"]{color-scheme:dark}
+  .ne-manual-tag{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;color:var(--muted);
+    background:var(--glass2);border:1px solid var(--stroke2);border-radius:999px;padding:5px 12px;margin-top:12px}
+  .ne-manual-tag button{padding:2px 8px;font-size:.62rem;border-radius:999px}
 
   /* ---------- FF-LISTE ---------- */
   .filters{display:flex;gap:8px;flex-wrap:wrap}
@@ -307,20 +317,16 @@
   .c-warn{color:#FFC66B!important}
   .c-bad{color:#FF9C94!important}
   .c-good .t-sub,.c-warn .t-sub,.c-bad .t-sub{color:var(--muted)}
-  .radar-flags{display:flex;flex-direction:column;gap:8px;padding:10px 22px 16px}
-  .flag-item{font-size:.7rem;line-height:1.6;color:var(--muted);padding:11px 14px;border-radius:var(--r-sm);
-    background:var(--glass);border-left:2px solid var(--stroke2)}
-  .flag-item b{color:var(--ink);font-weight:600}
-  .flag-item.warn{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,159,28,.08),transparent)}
-  .flag-item.warn b{color:#FFC66B}
   /* ---------- MARKTKALENDER ---------- */
-  .mk-strip{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:13px 18px;margin-bottom:22px;
+  .mk-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 20px;margin-bottom:22px;
     border-radius:var(--r-md);background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(18px)}
   .mk-strip.soon{border-color:rgba(255,159,28,.5);background:linear-gradient(90deg,rgba(255,159,28,.12),rgba(255,255,255,.02))}
-  .mk-label{font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  .mk-main-info{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .mk-label{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
   .mk-strip.soon .mk-label{color:#FFC66B}
-  .mk-days{font-family:var(--mono);font-weight:700;font-size:.8rem;color:var(--muted);white-space:nowrap}
+  .mk-days{font-family:var(--mono);font-weight:700;font-size:.98rem;color:var(--ink);white-space:nowrap}
   .mk-strip.soon .mk-days{color:#FFC66B}
+  .mk-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .mk-list{display:none;flex-direction:column;gap:6px;padding:0 18px 16px}
   .mk-list.open{display:flex}
   .mk-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 12px;border-radius:var(--r-sm);
@@ -424,9 +430,19 @@
 <section class="card mb rv" id="next-event-card" style="animation-delay:.24s">
   <div class="card-head">
     <h2><span class="dot"></span>Nächstes Red Folder</h2>
-    <span class="hint">Inkl. deiner Myfxbook-Hochstufungen (↑ Rot)</span>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="hint">Inkl. deiner Myfxbook-Hochstufungen (↑ Rot)</span>
+      <button id="btn-manual-toggle" style="padding:6px 12px;font-size:.62rem">+ Manuell ergänzen</button>
+    </div>
   </div>
   <div class="card-body">
+    <div class="ne-manual-form" id="ne-manual-form">
+      <p class="hint" style="flex-basis:100%">Zeigt Myfxbook (oder eine andere Quelle) ein Red Folder, das FF noch nicht oder mit falscher Zeit hat? Hier eintragen — zählt dann überall mit, bis es vorbei ist.</p>
+      <input type="text" id="nm-ccy" placeholder="Währung, z.B. USD" maxlength="8">
+      <input type="text" id="nm-title" placeholder="Titel, z.B. CPI m/m">
+      <input type="datetime-local" id="nm-when">
+      <button id="nm-submit" class="primary">Hinzufügen</button>
+    </div>
     <div class="ne-box" id="next-event-body"></div>
   </div>
 </section>
@@ -484,10 +500,14 @@
 
 <section class="card rv" style="animation-delay:.4s;margin-bottom:22px" id="mk-card">
   <div class="mk-strip" id="mk-strip">
-    <span class="mk-label">Besondere Marktschließungen</span>
-    <span class="mk-days" id="mk-days"></span>
-    <button id="mk-toggle" style="padding:6px 12px;font-size:.66rem;margin-left:auto">Alle anzeigen</button>
-    <a class="link-pill" href="https://www.oanda.com/bvi-en/cfds/holiday-trading-hours/" target="_blank" rel="noopener">Broker-Zeiten ↗</a>
+    <div class="mk-main-info">
+      <span class="mk-label">Besondere Marktschließungen</span>
+      <span class="mk-days" id="mk-days"></span>
+    </div>
+    <div class="mk-actions">
+      <button id="mk-toggle" style="padding:6px 12px;font-size:.66rem">Alle anzeigen</button>
+      <a class="link-pill" href="https://www.oanda.com/bvi-en/cfds/holiday-trading-hours/" target="_blank" rel="noopener">Broker-Zeiten ↗</a>
+    </div>
   </div>
   <div class="mk-list" id="mk-list"></div>
 </section>
@@ -615,7 +635,7 @@
           <th>Max</th>
           <th>Consist.</th>
           <th>Min-Days Challenge</th>
-          <th>Min-Days Funded</th>
+          <th>Min-Days Payout</th>
           <th>Weekend</th>
           <th>Risk/Trade</th>
         </tr>
@@ -628,7 +648,7 @@
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>4</td>
-          <td>14<span class="t-sub">Tage ab 1. Handelstag</span></td>
+          <td>1<span class="t-sub">Handelstag</span></td>
           <td class="c-bad">Nein</td>
           <td class="c-warn">Frei<span class="t-sub">&gt;1,5% = High-Risk-Flag</span></td>
         </tr>
@@ -639,7 +659,7 @@
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>3</td>
-          <td>14<span class="t-sub">Tage-Zyklus</span></td>
+          <td>1<span class="t-sub">Handelstag</span></td>
           <td class="c-good">Ja</td>
           <td class="c-good">Frei<span class="t-sub">sofern nicht restricted</span></td>
         </tr>
@@ -650,7 +670,7 @@
           <td class="c-bad">8 / 10%<span class="t-sub">static</span></td>
           <td class="c-warn">40%<span class="t-sub">nur On-Demand</span></td>
           <td>3</td>
-          <td>14<span class="t-sub">Tage-Zyklus</span></td>
+          <td>5<span class="t-sub">mind. Handelstage</span></td>
           <td class="c-bad">Nein</td>
           <td class="c-good">Frei<span class="t-sub">sofern nicht restricted</span></td>
         </tr>
@@ -661,7 +681,7 @@
           <td class="c-bad">12%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>0<span class="t-sub">3 bei 95%-Split</span></td>
-          <td>14<span class="t-sub">Tage ab 1. Trade auf Master</span></td>
+          <td>1<span class="t-sub">Handelstag</span></td>
           <td class="c-bad">Nein<span class="t-sub">seit 29.01.26</span></td>
           <td class="c-warn">2%<span class="t-sub">pro Trade, Funded</span></td>
         </tr>
@@ -672,7 +692,7 @@
           <td class="c-bad">10%<span class="t-sub">static</span></td>
           <td class="c-good">&mdash;</td>
           <td>5</td>
-          <td>14<span class="t-sub">Tage-Zyklus, kein Min.</span></td>
+          <td>1<span class="t-sub">Handelstag</span></td>
           <td class="c-bad">Nein</td>
           <td class="c-warn">3%<span class="t-sub">pro Trade, Funded</span></td>
         </tr>
@@ -680,11 +700,10 @@
     </table>
   </div>
 
-  <div class="radar-flags">
-    <div class="flag-item"><b>Equity</b> = floating Verluste z&auml;hlen sofort &middot; <b>Balance</b> = nur geschlossene Trades.</div>
-    <div class="flag-item warn"><b>FundingPips:</b> beim Daily-Limit z&auml;hlt der jeweils h&ouml;here Wert aus Equity/Balance &mdash; h&auml;ltst du einen Trade &uuml;ber Nacht im Minus, greift die (h&ouml;here) Balance statt der Equity.</div>
-    <div class="flag-item"><b>FundedNext:</b> Gold-Leverage seit Jan 2026 auf 1:10.</div>
-    <div class="flag-item">Alle Angaben ohne Gew&auml;hr, Stand 12.07.2026 &mdash; vor Trade/Payout offizielle FAQ der jeweiligen Firma pr&uuml;fen.</div>
+  <div class="rules-note" style="margin:6px 22px 22px">
+    <b>Equity</b> = floating Verluste sofort &middot; <b>Balance</b> = nur geschlossene Trades.
+    <b>FundingPips-Daily:</b> z&auml;hlt der h&ouml;here Wert aus Equity/Balance &mdash; ein Trade &uuml;ber Nacht im Minus l&auml;sst die Balance greifen.
+    FundedNext: Gold-Leverage seit Jan 2026 auf 1:10. Alle Angaben ohne Gew&auml;hr, Stand 12.07.2026 &mdash; vor Trade/Payout offizielle FAQ pr&uuml;fen.
   </div>
 </section>
 
@@ -886,6 +905,7 @@ async function loadFeed(manual){
       usingFallback ? "Beispieldaten — kein Feed erreichbar" : "Letzter erfolgreicher Abruf — Feed aktuell nicht erreichbar");
     document.getElementById("offline-banner").style.display = "block";
   }finally{
+    mergeManualEvents();
     renderEvents();
     renderNextEvent();
     fillTicker();
@@ -915,6 +935,28 @@ function toggleOverride(e){
   if(overrides[k]) delete overrides[k];
   else overrides[k] = e.ts;
   store.set("wr:overrides", overrides);
+  renderEvents(); renderNextEvent();
+}
+
+/* ---------- Manuelle Events: FF-Feed hat keine Myfxbook-Daten (Server blockt Bot-Zugriffe,
+   siehe Chat) — wenn Myfxbook ein Red Folder früher/anders zeigt als FF, hier von Hand
+   eintragen, damit Countdown + Liste die reale Zeit nutzen statt der (möglicherweise
+   falschen) FF-Zeit. ---------- */
+let manualEvents = store.get("wr:manual") || [];
+function mergeManualEvents(){
+  const manual = manualEvents.map(m => ({title:m.title, country:m.country, impact:"High", forecast:"", previous:"", ts:m.ts, allDay:false, manual:true, manualId:m.id}));
+  events = events.filter(e => !e.manual).concat(manual).sort((a,b) => a.ts - b.ts);
+}
+function addManualEvent(country, title, ts){
+  manualEvents.push({id: country + "@" + ts + "|" + title + "|" + Date.now(), country, title, ts});
+  store.set("wr:manual", manualEvents);
+  mergeManualEvents();
+  renderEvents(); renderNextEvent();
+}
+function removeManualEvent(id){
+  manualEvents = manualEvents.filter(m => m.id !== id);
+  store.set("wr:manual", manualEvents);
+  mergeManualEvents();
   renderEvents(); renderNextEvent();
 }
 function highEvents(){ return events.filter(e => effImpact(e) === "High"); }
@@ -966,6 +1008,20 @@ document.getElementById("mk-toggle").addEventListener("click", () => {
   const l = document.getElementById("mk-list");
   const open = l.classList.toggle("open");
   document.getElementById("mk-toggle").textContent = open ? "Zuklappen" : "Alle anzeigen";
+});
+
+/* ---------- Manuelle Events wiring ---------- */
+document.getElementById("btn-manual-toggle").addEventListener("click", () => {
+  document.getElementById("ne-manual-form").classList.toggle("open");
+});
+document.getElementById("nm-submit").addEventListener("click", () => {
+  const ccyEl = document.getElementById("nm-ccy"), titleEl = document.getElementById("nm-title"), whenEl = document.getElementById("nm-when");
+  const ccy = ccyEl.value.trim().toUpperCase(), title = titleEl.value.trim();
+  const ts = whenEl.value ? new Date(whenEl.value).getTime() : NaN;
+  if(!ccy || !title || Number.isNaN(ts)) return;
+  addManualEvent(ccy, title, ts);
+  ccyEl.value = ""; titleEl.value = ""; whenEl.value = "";
+  document.getElementById("ne-manual-form").classList.remove("open");
 });
 
 /* ---------- Chart (TradingView, umschaltbar) ---------- */
@@ -1046,9 +1102,10 @@ function renderEvents(){
       + '<span class="imp ' + impCls + '" title="' + (ov ? "Von dir auf Rot hochgestuft (Myfxbook)" : esc(e.impact) + " Impact (FF)") + '"></span>'
       + '<span class="ev-time">' + fmtTimeDE.format(d) + '</span>'
       + '<span class="ev-ccy' + (isUsd?" usd":"") + '">' + esc(e.country) + '</span>'
-      + '<span class="ev-title">' + esc(e.title) + (ov ? ' <span class="mfx-badge" title="Auf Myfxbook-Einstufung hochgestuft">MFX</span>' : '') + '</span>'
+      + '<span class="ev-title">' + esc(e.title) + (ov ? ' <span class="mfx-badge" title="Auf Myfxbook-Einstufung hochgestuft">MFX</span>' : '') + (e.manual ? ' <span class="mfx-badge" title="Manuell ergänzt">MANUELL</span>' : '') + '</span>'
       + '<span class="ev-arm">'
       +   (!isPast && e.impact !== "High" ? '<button class="ov-btn' + (ov?" on":"") + '" data-ov="' + esc(ovKey(e)) + '" title="' + (ov ? "Hochstufung zurücknehmen" : "Myfxbook stuft rot ein? Hier auf Rot hochstufen") + '">' + (ov ? "↓ Zurück" : "↑ Rot") + '</button>' : '')
+      +   (e.manual ? '<button class="ov-btn" data-manual-del="' + esc(e.manualId) + '" title="Manuellen Eintrag löschen">✕ Löschen</button>' : '')
       + '</span>'
       + '<span class="ev-meta">'
       +   (e.forecast ? '<span>FCST <b>' + esc(e.forecast) + '</b></span>' : '')
@@ -1118,7 +1175,10 @@ document.getElementById("event-list").addEventListener("click", (e) => {
   if(ovBtn){
     const ev = events.find(x => ovKey(x) === ovBtn.dataset.ov);
     if(ev) toggleOverride(ev);
+    return;
   }
+  const delBtn = e.target.closest("[data-manual-del]");
+  if(delBtn) removeManualEvent(delBtn.dataset.manualDel);
 });
 document.getElementById("btn-ff-win").addEventListener("click", () => {
   window.open("https://www.forexfactory.com/calendar","ffwin","width=1180,height=920");
@@ -1176,6 +1236,11 @@ document.getElementById("feed-pill").addEventListener("click", () => loadFeed(tr
       if(Date.now() - overrides[k] > 8*24*3600*1000){ delete overrides[k]; ovChanged = true; }
     }
     if(ovChanged) store.set("wr:overrides", overrides);
+  }catch(e){}
+  try{
+    const before = manualEvents.length;
+    manualEvents = manualEvents.filter(m => Date.now() - m.ts < 24*3600*1000);
+    if(manualEvents.length !== before) store.set("wr:manual", manualEvents);
   }catch(e){}
 })();
 

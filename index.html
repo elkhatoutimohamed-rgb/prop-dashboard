@@ -399,9 +399,8 @@
     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
     {
       "symbols": [
-        {"proName": "OANDA:XAUUSD", "title": "Gold"},
+        {"proName": "OANDA:XAUUSD", "title": "GOLD"},
         {"proName": "OANDA:US30USD", "title": "US30"},
-        {"proName": "OANDA:EURUSD", "title": "EUR/USD"},
         {"proName": "BITSTAMP:BTCUSD", "title": "BTC/USD"}
       ],
       "showSymbolLogo": false,
@@ -425,7 +424,7 @@
     <h2><span class="dot"></span>Live Chart</h2>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="filters">
-        <button class="chart-sym" data-sym="XAU">Gold</button>
+        <button class="chart-sym" data-sym="XAU">GOLD</button>
         <button class="chart-sym" data-sym="US30">US30</button>
         <button class="chart-sym" data-sym="BTC">BTCUSD</button>
       </div>
@@ -1072,10 +1071,16 @@ function updateFxResult(){
 async function loadFxRate(){
   const hint = document.getElementById("fx-rate-hint");
   try{
-    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=EUR", {cache:"no-store"});
+    const res = await fetch("https://api.frankfurter.dev/v1/latest?from=USD&to=EUR", {cache:"no-store"});
     const data = await res.json();
     fxRate = data && data.rates && data.rates.EUR;
-    hint.textContent = fxRate ? ("1 USD = " + fxRate.toFixed(4) + " € · Stand " + data.date) : "Kurs aktuell nicht verfügbar";
+    if(fxRate){ hint.textContent = "1 USD = " + fxRate.toFixed(4) + " € · Stand " + data.date; updateFxResult(); return; }
+  }catch(e){}
+  try{
+    const res2 = await fetch("https://open.er-api.com/v6/latest/USD", {cache:"no-store"});
+    const data2 = await res2.json();
+    fxRate = data2 && data2.rates && data2.rates.EUR;
+    hint.textContent = fxRate ? ("1 USD = " + fxRate.toFixed(4) + " € · Stand " + data2.time_last_update_utc) : "Kurs aktuell nicht verfügbar";
   }catch(e){
     hint.textContent = "Kurs aktuell nicht verfügbar";
   }
@@ -1085,7 +1090,7 @@ document.getElementById("fx-input").addEventListener("input", updateFxResult);
 loadFxRate();
 
 /* ---------- Chart (TradingView, umschaltbar) ---------- */
-const CHART_SYMS = { XAU:{label:"Gold", tv:"OANDA:XAUUSD"}, US30:{label:"US30", tv:"OANDA:US30USD"}, BTC:{label:"BTCUSD", tv:"BITSTAMP:BTCUSD"} };
+const CHART_SYMS = { XAU:{label:"GOLD", tv:"OANDA:XAUUSD"}, US30:{label:"US30", tv:"OANDA:US30USD"}, BTC:{label:"BTCUSD", tv:"BITSTAMP:BTCUSD"} };
 function mountChart(key){
   if(!CHART_SYMS[key]) key = "XAU";
   const box = document.getElementById("chart-mount"); if(!box) return;

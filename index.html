@@ -526,11 +526,12 @@
 <!-- ================= WÄHRUNGSRECHNER ================= -->
 <section class="card rv" style="animation-delay:.41s;margin-bottom:22px" id="fx-card">
   <div class="card-head">
-    <h2><span class="dot"></span>USD &rarr; EUR Rechner</h2>
+    <h2><span class="dot"></span><span id="fx-title">USD &rarr; EUR</span> Rechner</h2>
     <span class="hint" id="fx-rate-hint">Kurs wird geladen &hellip;</span>
   </div>
-  <div class="card-body" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+  <div class="card-body" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
     <input type="number" id="fx-input" placeholder="USD-Betrag" inputmode="decimal">
+    <button id="fx-swap" title="Richtung wechseln" aria-label="Richtung wechseln" style="padding:9px 13px">&#8646;</button>
     <div class="fx-result" id="fx-result">&mdash;</div>
   </div>
 </section>
@@ -1060,21 +1061,33 @@ document.getElementById("ne-manual-tags").addEventListener("click", (e) => {
   if(delBtn) removeManualEvent(delBtn.dataset.manualDel);
 });
 
-/* ---------- USD → EUR Rechner ---------- */
-let fxRate = null;
+/* ---------- USD ⇄ EUR Rechner ---------- */
+let fxRate = null; // 1 USD in EUR
+let fxDir = "USD_EUR";
 function updateFxResult(){
   const val = parseFloat(document.getElementById("fx-input").value);
   const out = document.getElementById("fx-result");
   if(!fxRate || Number.isNaN(val)){ out.textContent = "—"; return; }
-  out.textContent = (val * fxRate).toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+  const result = fxDir === "USD_EUR" ? val * fxRate : val / fxRate;
+  const symbol = fxDir === "USD_EUR" ? "€" : "$";
+  out.textContent = result.toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2}) + " " + symbol;
 }
+function applyFxDirection(){
+  document.getElementById("fx-title").textContent = fxDir === "USD_EUR" ? "USD → EUR" : "EUR → USD";
+  document.getElementById("fx-input").placeholder = fxDir === "USD_EUR" ? "USD-Betrag" : "EUR-Betrag";
+  updateFxResult();
+}
+document.getElementById("fx-swap").addEventListener("click", () => {
+  fxDir = fxDir === "USD_EUR" ? "EUR_USD" : "USD_EUR";
+  applyFxDirection();
+});
 async function loadFxRate(){
   const hint = document.getElementById("fx-rate-hint");
   try{
     const res = await fetch("https://api.frankfurter.dev/v1/latest?from=USD&to=EUR", {cache:"no-store"});
     const data = await res.json();
     fxRate = data && data.rates && data.rates.EUR;
-    if(fxRate){ hint.textContent = "1 USD = " + fxRate.toFixed(4) + " € · Stand " + data.date; updateFxResult(); return; }
+    if(fxRate){ hint.textContent = "1 USD = " + fxRate.toFixed(4) + " € · Stand " + data.date; applyFxDirection(); return; }
   }catch(e){}
   try{
     const res2 = await fetch("https://open.er-api.com/v6/latest/USD", {cache:"no-store"});
@@ -1084,7 +1097,7 @@ async function loadFxRate(){
   }catch(e){
     hint.textContent = "Kurs aktuell nicht verfügbar";
   }
-  updateFxResult();
+  applyFxDirection();
 }
 document.getElementById("fx-input").addEventListener("input", updateFxResult);
 loadFxRate();

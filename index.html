@@ -355,10 +355,45 @@
     display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
   .xlinks{display:flex;gap:10px;flex-wrap:wrap}
 
+  /* ---------- ICONS ---------- */
+  .icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+  /* ---------- GRAIN OVERLAY ---------- */
+  .grain{position:fixed;inset:-100px;z-index:2;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+
+  /* ---------- SKELETON LOADING ---------- */
+  .skel{position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(255,255,255,.045),rgba(255,255,255,.1),rgba(255,255,255,.045));
+    background-size:200% 100%;animation:skelSheen 1.6s ease-in-out infinite;border:1px solid var(--stroke)}
+  @keyframes skelSheen{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .skel-ev{height:56px;border-radius:var(--r-md);margin-bottom:10px}
+  .skel-line{height:14px;border-radius:6px;margin:0 auto}
+  .feed-pill .led.loading{background:#3a3a44;box-shadow:none;animation:softPulse 1.4s ease-in-out infinite}
+
+  /* ---------- NUMBER FLASH ---------- */
+  .flash{animation:flashPop .6s var(--ease)}
+  @keyframes flashPop{0%{filter:brightness(2.1) saturate(1.5)}100%{filter:brightness(1) saturate(1)}}
+
+  /* ---------- GAUGE BARS (Regel-Radar) ---------- */
+  .gauge{display:block;margin-top:7px;height:4px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+  .gauge i{display:block;height:100%;width:var(--pct,0%);border-radius:3px;background:currentColor;box-shadow:0 0 8px currentColor;opacity:.85}
+
+  /* ---------- BENTO LAYOUT (Desktop ≥ 1200px, darunter normal gestapelt) ---------- */
+  @media(min-width:1200px){
+    .bento-row{display:grid;gap:24px;margin-bottom:26px;align-items:stretch}
+    .bento-row.hero{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+    .bento-row.strip{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .bento-row>.card{margin-bottom:0}
+    .bento-row.hero>.card{display:flex;flex-direction:column}
+    .bento-row.hero .chart-box{flex:1;height:auto;min-height:600px}
+    .bento-row.hero #next-event-card .card-body{flex:1;display:flex;flex-direction:column;justify-content:center}
+  }
+
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
     .rv{opacity:1!important;transform:none!important}
     .aurora{display:none}
+    .grain{display:none}
   }
 </style>
 </head>
@@ -367,6 +402,16 @@
 <div class="aurora a1"></div>
 <div class="aurora a2"></div>
 <div class="aurora a3"></div>
+<div class="grain"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.5 8.5 0 1110 3.6a6.7 6.7 0 007.9 9 6.7 6.7 0 002.6 1.6z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M22 4v6h-6"/><path d="M2 20v-6h6"/><path d="M3.5 9a8.5 8.5 0 0114-3.2L22 10"/><path d="M20.5 15a8.5 8.5 0 01-14 3.2L2 14"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M17 13.2V19a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2h5.8"/><path d="M14 3h7v7"/><path d="M9.5 14.5L21 3"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24"><path d="M10.4 3.5L1.7 18.3a1.8 1.8 0 001.6 2.7h17.4a1.8 1.8 0 001.6-2.7L13.6 3.5a1.8 1.8 0 00-3.2 0z"/><path d="M12 9.3v4"/><path d="M12 16.8h.01"/></symbol>
+  </defs>
+</svg>
 
 <header class="rv" style="animation-delay:.02s">
   <div class="brand">
@@ -387,8 +432,8 @@
   </div>
   <div class="hdr-actions">
     <button class="feed-pill" id="feed-pill" type="button" title="Feed-Status — antippen zum Neu laden">
-      <span class="led" id="feed-led"></span><span id="feed-status">Feed …</span>
-      <span class="feed-reload" id="feed-reload-icon" aria-hidden="true">⟳</span>
+      <span class="led loading" id="feed-led"></span><span id="feed-status">Feed …</span>
+      <span class="feed-reload" id="feed-reload-icon" aria-hidden="true"><svg class="icon"><use href="#i-refresh"></use></svg></span>
     </button>
   </div>
 </header>
@@ -413,11 +458,12 @@
 </div>
 
 <div class="banner" id="offline-banner">
-  <b>⚠ Fallback-Daten — Feed nicht erreichbar.</b> Kalender nicht aktuell, vor Trades manuell prüfen.
+  <b><svg class="icon"><use href="#i-warning"></use></svg> Fallback-Daten — Feed nicht erreichbar.</b> Kalender nicht aktuell, vor Trades manuell prüfen.
 </div>
 
 <main>
 
+<div class="bento-row hero">
 <!-- ================= CHART ================= -->
 <section class="card mb rv" id="chart-card" style="animation-delay:.12s">
   <div class="card-head">
@@ -457,6 +503,7 @@
     <div class="ne-box" id="next-event-body"></div>
   </div>
 </section>
+</div>
 
 <!-- ================= FF LISTE + MYFXBOOK ================= -->
 <div class="ff-myfx-tabs" role="tablist" aria-label="Kalender-Ansicht">
@@ -478,11 +525,14 @@
           <button data-ccy="ALL" class="ccy-filter active">Alle Währungen</button>
           <button data-ccy="USD" class="ccy-filter">Nur USD</button>
         </div>
-        <button id="btn-ff-win" title="ForexFactory-Original in eigenem Fenster">◱ Originalseite öffnen</button>
+        <button id="btn-ff-win" title="ForexFactory-Original in eigenem Fenster"><svg class="icon"><use href="#i-external"></use></svg> Originalseite öffnen</button>
       </div>
     </div>
     <div class="list-scroll" id="event-list">
-      <p class="empty">Lade ForexFactory-Feed …</p>
+      <div class="skel skel-ev" style="animation-delay:0s"></div>
+      <div class="skel skel-ev" style="animation-delay:.1s"></div>
+      <div class="skel skel-ev" style="animation-delay:.2s"></div>
+      <div class="skel skel-ev" style="animation-delay:.3s"></div>
     </div>
   </section>
 
@@ -491,9 +541,9 @@
       <h2><span class="dot"></span>Myfxbook · Live-Kalender</h2>
       <span class="hint" style="flex-basis:100%;order:9">Reines Vergleichs-Widget — Myfxbook wird nicht automatisch berücksichtigt.</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget">🌙 Dark</button>
-        <button id="btn-myfx-reload" title="Widget neu laden — hilft, wenn der Währungsfilter hängen bleibt">🔄 Neu laden</button>
-        <button id="btn-myfx-win" title="Myfxbook-Original in eigenem Fenster">◱ Originalseite öffnen</button>
+        <button id="btn-myfx-dark" class="active" title="Dunkles Farbschema für das Widget"><svg class="icon"><use href="#i-moon"></use></svg> Dark</button>
+        <button id="btn-myfx-reload" title="Widget neu laden — hilft, wenn der Währungsfilter hängen bleibt"><svg class="icon"><use href="#i-refresh"></use></svg> Neu laden</button>
+        <button id="btn-myfx-win" title="Myfxbook-Original in eigenem Fenster"><svg class="icon"><use href="#i-external"></use></svg> Originalseite öffnen</button>
       </div>
     </div>
     <div class="frame-wrap myfx-dark" id="myfx-frame" style="min-height:640px">
@@ -503,13 +553,14 @@
     </div>
     <p class="panel-note">
       Alle Währungen, nur High/Red Folder, mit Actual-Werten in Echtzeit — dein Gegencheck zur FF-Einstufung links.
-      Zeitzone im Widget einmal auf GMT+1 stellen (wird gemerkt). Hängt der Währungsfilter fest: <b>🔄 Neu laden</b> nutzen.
+      Zeitzone im Widget einmal auf GMT+1 stellen (wird gemerkt). Hängt der Währungsfilter fest: <b><svg class="icon"><use href="#i-refresh"></use></svg> Neu laden</b> nutzen.
     </p>
   </section>
 
 </div>
 
-<section class="card rv" style="animation-delay:.4s;margin-bottom:22px" id="mk-card">
+<div class="bento-row strip">
+<section class="card mb rv" style="animation-delay:.4s" id="mk-card">
   <div class="mk-strip" id="mk-strip">
     <div class="mk-main-info">
       <span class="mk-label">Besondere Marktschließungen</span>
@@ -524,7 +575,7 @@
 </section>
 
 <!-- ================= WÄHRUNGSRECHNER ================= -->
-<section class="card rv" style="animation-delay:.41s;margin-bottom:22px" id="fx-card">
+<section class="card mb rv" style="animation-delay:.41s" id="fx-card">
   <div class="card-head">
     <h2><span class="dot"></span><span id="fx-title">USD &rarr; EUR</span> Rechner</h2>
     <span class="hint" id="fx-rate-hint">Kurs wird geladen &hellip;</span>
@@ -535,6 +586,7 @@
     <div class="fx-result" id="fx-result">&mdash;</div>
   </div>
 </section>
+</div>
 
 <!-- ================= PAYOUT JUNCTION ================= -->
 <section class="card mb rv" id="pj-card" style="animation-delay:.42s">
@@ -553,7 +605,7 @@
       </p>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button id="btn-pj-win" class="primary" style="padding:11px 22px">◱ Öffnen</button>
+      <button id="btn-pj-win" class="primary" style="padding:11px 22px"><svg class="icon"><use href="#i-external"></use></svg> Öffnen</button>
       <a class="link-pill" style="justify-content:center" href="https://x.com/payoutjunction" target="_blank" rel="noopener">@payoutjunction auf X ↗</a>
     </div>
   </div>
@@ -665,8 +717,8 @@
         <tr>
           <td class="t-firm">FTMO<span>Standard</span></td>
           <td>Equity</td>
-          <td class="c-bad">5%</td>
-          <td class="c-bad">10%<span class="t-sub">static</span></td>
+          <td class="c-bad">5%<span class="gauge" style="--pct:83%"><i></i></span></td>
+          <td class="c-bad">10%<span class="t-sub">static</span><span class="gauge" style="--pct:71%"><i></i></span></td>
           <td class="c-good">&mdash;</td>
           <td class="c-warn">4</td>
           <td class="c-good">0<span class="t-sub">14 Tage seit 1. Trade</span></td>
@@ -676,8 +728,8 @@
         <tr>
           <td class="t-firm">The5ers<span>High Stakes</span></td>
           <td>H&ouml;herer Wert<span class="t-sub">Equity/Balance</span></td>
-          <td class="c-bad">5%</td>
-          <td class="c-bad">10%<span class="t-sub">static</span></td>
+          <td class="c-bad">5%<span class="gauge" style="--pct:83%"><i></i></span></td>
+          <td class="c-bad">10%<span class="t-sub">static</span><span class="gauge" style="--pct:71%"><i></i></span></td>
           <td class="c-good">&mdash;</td>
           <td class="c-warn">3</td>
           <td class="c-good">0<span class="t-sub">14 Tage nach Funded</span></td>
@@ -687,8 +739,8 @@
         <tr>
           <td class="t-firm">Alpha Capital<span>Alpha Pro &middot; 2-Step</span></td>
           <td>Balance</td>
-          <td class="c-bad">4 / 5%<span class="t-sub">Pro 8 / 10</span></td>
-          <td class="c-bad">8 / 10%<span class="t-sub">static</span></td>
+          <td class="c-bad">4 / 5%<span class="t-sub">Pro 8 / 10</span><span class="gauge" style="--pct:75%"><i></i></span></td>
+          <td class="c-bad">8 / 10%<span class="t-sub">static</span><span class="gauge" style="--pct:64%"><i></i></span></td>
           <td class="c-warn">40%<span class="t-sub">nur On-Demand</span></td>
           <td class="c-warn">3</td>
           <td class="c-warn">5<span class="t-sub">Handelstage auf Funded</span></td>
@@ -698,8 +750,8 @@
         <tr>
           <td class="t-firm">FundingPips<span>2-Step Flex</span></td>
           <td>H&ouml;herer Wert<span class="t-sub">Equity/Balance</span></td>
-          <td class="c-bad">4%</td>
-          <td class="c-bad">12%<span class="t-sub">static</span></td>
+          <td class="c-bad">4%<span class="gauge" style="--pct:67%"><i></i></span></td>
+          <td class="c-bad">12%<span class="t-sub">static</span><span class="gauge" style="--pct:86%"><i></i></span></td>
           <td class="c-good">&mdash;</td>
           <td class="c-good">0<span class="t-sub">3 bei 95%-Split</span></td>
           <td class="c-good">0<span class="t-sub">14-Tage-Zyklus</span></td>
@@ -709,8 +761,8 @@
         <tr>
           <td class="t-firm">FundedNext<span>Stellar 2-Step</span></td>
           <td>Balance</td>
-          <td class="c-bad">5%</td>
-          <td class="c-bad">10%<span class="t-sub">static</span></td>
+          <td class="c-bad">5%<span class="gauge" style="--pct:83%"><i></i></span></td>
+          <td class="c-bad">10%<span class="t-sub">static</span><span class="gauge" style="--pct:71%"><i></i></span></td>
           <td class="c-warn">40%<span class="t-sub">On-Demand, bester Tag &le;40%</span></td>
           <td class="c-warn">5</td>
           <td class="c-good">0<span class="t-sub">21-Tage-Zyklus, danach 14 Tage</span></td>
@@ -773,6 +825,7 @@ let events = [];
 let ccyFilter = "ALL";
 let lastFetch = 0;
 let usingFallback = false;
+let feedLoaded = false;
 
 let settings = store.get("wr:settings") || {};
 ccyFilter = settings.ccyFilter || "ALL";
@@ -924,6 +977,7 @@ async function loadFeed(manual){
       usingFallback ? "Beispieldaten — kein Feed erreichbar" : "Letzter erfolgreicher Abruf — Feed aktuell nicht erreichbar");
     document.getElementById("offline-banner").style.display = "block";
   }finally{
+    feedLoaded = true;
     mergeManualEvents();
     renderEvents();
     renderNextEvent();
@@ -935,13 +989,16 @@ async function loadFeed(manual){
 function setFeedStatus(ok, label, detail){
   const led = document.getElementById("feed-led");
   const pill = document.getElementById("feed-pill");
+  const statusEl = document.getElementById("feed-status");
+  const changed = statusEl.textContent !== label;
   led.className = "led " + (ok ? "on" : "stale");
   if(pill){
     pill.classList.toggle("live", ok);
     pill.classList.toggle("stale", !ok);
     pill.title = detail + " — antippen zum Neu laden";
   }
-  document.getElementById("feed-status").textContent = label;
+  statusEl.textContent = label;
+  if(changed) flashEl(pill);
 }
 
 /* ---------- Myfxbook-Override: Events, die FF orange führt, Myfxbook aber rot ---------- */
@@ -1019,7 +1076,7 @@ function renderMarketCal(){
   const days = Math.round((next.ts - today.getTime()) / 86400000);
   const soon = days <= 10;
   strip.classList.toggle("soon", soon);
-  daysEl.textContent = (soon ? "⚠ " : "") + (days === 0 ? "HEUTE" : days === 1 ? "in 1 Tag" : "in " + days + " Tagen");
+  daysEl.innerHTML = (soon ? '<svg class="icon"><use href="#i-warning"></use></svg> ' : "") + (days === 0 ? "HEUTE" : days === 1 ? "in 1 Tag" : "in " + days + " Tagen");
   listEl.innerHTML = up.map(h => {
     const dd = new Date(h.ts);
     return '<div class="mk-row">'
@@ -1061,16 +1118,26 @@ document.getElementById("ne-manual-tags").addEventListener("click", (e) => {
   if(delBtn) removeManualEvent(delBtn.dataset.manualDel);
 });
 
+/* ---------- Flash-Effekt bei Zahlen-Updates (kurzer Brightness-Pop) ---------- */
+function flashEl(el){
+  if(!el) return;
+  el.classList.remove("flash");
+  void el.offsetWidth; // Reflow erzwingen, damit die Animation bei erneutem Hinzufügen neu startet
+  el.classList.add("flash");
+}
+
 /* ---------- USD ⇄ EUR Rechner ---------- */
 let fxRate = null; // 1 USD in EUR
 let fxDir = "USD_EUR";
 function updateFxResult(){
   const val = parseFloat(document.getElementById("fx-input").value);
   const out = document.getElementById("fx-result");
+  const prev = out.textContent;
   if(!fxRate || Number.isNaN(val)){ out.textContent = "—"; return; }
   const result = fxDir === "USD_EUR" ? val * fxRate : val / fxRate;
   const symbol = fxDir === "USD_EUR" ? "€" : "$";
   out.textContent = result.toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2}) + " " + symbol;
+  if(out.textContent !== prev) flashEl(out);
 }
 function applyFxDirection(){
   document.getElementById("fx-title").textContent = fxDir === "USD_EUR" ? "USD → EUR" : "EUR → USD";
@@ -1130,6 +1197,12 @@ function fillTicker(){ /* no-op: Status wird in setFeedStatus gesetzt */ }
 /* ---------- Nächstes Red Folder ---------- */
 function renderNextEvent(){
   const body = document.getElementById("next-event-body"); if(!body) return;
+  if(!feedLoaded && events.length === 0){
+    body.innerHTML = '<div class="skel skel-line" style="width:70%;height:18px"></div>'
+      + '<div class="skel skel-line" style="width:45%;height:34px;margin-top:14px"></div>'
+      + '<div class="skel skel-line" style="width:55%;height:12px;margin-top:12px"></div>';
+    return;
+  }
   const now = Date.now();
   const seen = new Set();
   const nextEv = highEvents().filter(e => e.ts > now)

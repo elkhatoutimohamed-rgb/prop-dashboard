@@ -634,7 +634,7 @@
   </div>
   <div class="rules-note">
     <b>FTMO ist die einzige Hard-Breach-Falle</b> — ein SL/TP, der im ±2-Fenster auslöst, killt den Account.
-    Fenster gelten für Instrumente der betroffenen Währung — für XAUUSD &amp; US30 sind das USD-Events.
+    Fenster gelten für Instrumente der betroffenen Währung — für GOLD &amp; US30 sind das USD-Events.
     Stand: 09.07.2026 — vor Positionierung offizielle FAQ gegenchecken.
   </div>
 </section>
@@ -994,11 +994,11 @@ function clusterAt(ts, country){ return events.filter(e => effImpact(e) === "Hig
    Quelle: NYSE/CME-Feiertagskalender + Broker-Holiday-Schedules (OANDA/FXCM).
    Zeiten sind RICHTWERTE (DE-Zeit) — der exakte Frühschluss hängt vom Broker ab. */
 const HOLIDAYS = [
-  {d:"2026-08-31", name:"Summer Bank Holiday (UK)", type:"early", note:"UK-Indizes (FTSE) geschlossen · FX/Gold normal"},
-  {d:"2026-09-07", name:"Labor Day (US)",           type:"early", note:"US-Indizes & Metalle Frühschluss ~19:00 · US30/XAUUSD betroffen"},
-  {d:"2026-11-26", name:"Thanksgiving (US)",        type:"closed",note:"US-Märkte geschlossen · US30/XAUUSD Frühschluss ~19:00"},
+  {d:"2026-08-31", name:"Summer Bank Holiday (UK)", type:"early", note:"UK-Indizes (FTSE) geschlossen · FX/GOLD normal"},
+  {d:"2026-09-07", name:"Labor Day (US)",           type:"early", note:"US-Indizes & Metalle Frühschluss ~19:00 · US30/GOLD betroffen"},
+  {d:"2026-11-26", name:"Thanksgiving (US)",        type:"closed",note:"US-Märkte geschlossen · US30/GOLD Frühschluss ~19:00"},
   {d:"2026-11-27", name:"Day after Thanksgiving",   type:"early", note:"Frühschluss ~19:00 DE (13:00 ET) · dünne Liquidität"},
-  {d:"2026-12-24", name:"Heiligabend",              type:"early", note:"Frühschluss ~19:00 DE · US30/XAUUSD betroffen"},
+  {d:"2026-12-24", name:"Heiligabend",              type:"early", note:"Frühschluss ~19:00 DE · US30/GOLD betroffen"},
   {d:"2026-12-25", name:"Weihnachten",              type:"closed",note:"Märkte geschlossen"},
   {d:"2027-01-01", name:"Neujahr",                  type:"closed",note:"Märkte geschlossen"}
 ];

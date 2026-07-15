@@ -28,6 +28,18 @@ Both surfaces are driven by the same `master` branch:
 - **Electron**: built on demand via `npm run dist`; nothing auto-deploys.
 - **PWA**: GitHub Pages serves directly from `master` (root). Any push to `master` triggers a rebuild, live in roughly 1-3 minutes. There's no staging step — pushing to `master` **is** shipping to the PWA.
 
+## Working conventions
+
+- **Always commit and push to `master` right after making a requested change** — don't leave edits sitting locally uncommitted. Per the deployment model above, pushing to `master` *is* shipping to the live PWA, and that's the only environment the user (and the friends he shares this with) actually cares about. Skip local-browser verification loops (cache-busting, incognito windows, hard refreshes) unless explicitly asked — that time is better spent shipping and letting the user check the real live site.
+- **Git identity**: this repo's commits are authored as `Flenkenz <elkhatoutimohamed@gmail.com>`. If a fresh clone has no local git identity configured and a commit fails with "Author identity unknown", set it locally (not `--global`) to match: `git config --local user.name "Flenkenz"` and `git config --local user.email "elkhatoutimohamed@gmail.com"`.
+- **`git push` should be run via PowerShell**, not the Bash tool, per the environment quirk below.
+
+## Prop-firm rule data — sourcing rule
+
+The Regel-Radar table and News-Regel-Matrix cards in `index.html` state real trading rules (drawdown %, consistency rules, news-trading windows, payout requirements, weekend-holding policy, risk limits) for FTMO, The5ers, Alpha Capital, FundingPips and FundedNext. **These numbers get used to manage real funded-account risk — getting them wrong has real-money consequences.**
+
+When researching or verifying any of this data: **use only each firm's own official FAQ/help-center pages** — e.g. `ftmo.com/en/faq/...`, `help.the5ers.com/...`, `help.alphacapitalgroup.uk/...`, `help.fundingpips.com/...`, `help.fundednext.com/...`. Never rely on third-party blogs, "review" sites, or aggregator content (propvator.com, tradingfinder.com, proptradingvibes.com, tradetanto.com, etc.) — not even as a stepping stone before confirming with the primary source. Prefer fetching the official URL directly over summarizing search results, since search summaries often blend in third-party content or conflate different account variants (e.g. Stellar Instant vs. Stellar 2-Step) without flagging it. If an official page is blocked or unreachable, say so explicitly rather than silently falling back to a secondary source. If the user states something from their own funded-account experience that conflicts with a written source, trust the user.
+
 ## Architecture notes that span multiple files
 
 **FF feed has no CORS headers**, so `fetch(FEED_URL)` succeeds from Electron's `file://` origin (lenient) but is silently blocked by real browsers on the `https://` GitHub Pages origin. Workaround, in two parts:

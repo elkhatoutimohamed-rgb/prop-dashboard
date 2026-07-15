@@ -523,21 +523,8 @@
   <div class="mk-list" id="mk-list"></div>
 </section>
 
-<!-- ================= WÄHRUNGSRECHNER ================= -->
-<section class="card rv" style="animation-delay:.41s;margin-bottom:22px" id="fx-card">
-  <div class="card-head">
-    <h2><span class="dot"></span><span id="fx-title">USD &rarr; EUR</span> Rechner</h2>
-    <span class="hint" id="fx-rate-hint">Kurs wird geladen &hellip;</span>
-  </div>
-  <div class="card-body" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-    <input type="number" id="fx-input" placeholder="USD-Betrag" inputmode="decimal">
-    <button id="fx-swap" title="Richtung wechseln" aria-label="Richtung wechseln" style="padding:9px 13px">&#8646;</button>
-    <div class="fx-result" id="fx-result">&mdash;</div>
-  </div>
-</section>
-
 <!-- ================= PAYOUT JUNCTION ================= -->
-<section class="card mb rv" id="pj-card" style="animation-delay:.42s">
+<section class="card rv" style="animation-delay:.41s;margin-bottom:22px" id="pj-card">
   <div class="card-head">
     <h2><span class="dot"></span>Payout Junction · Live-Payouts</h2>
   </div>
@@ -558,6 +545,19 @@
     </div>
   </div>
   <div class="frame-wrap" id="pj-embed" style="display:none;margin-top:0"></div>
+</section>
+
+<!-- ================= WÄHRUNGSRECHNER ================= -->
+<section class="card mb rv" id="fx-card" style="animation-delay:.42s">
+  <div class="card-head">
+    <h2><span class="dot"></span><span id="fx-title">USD &rarr; EUR</span> Rechner</h2>
+    <span class="hint" id="fx-rate-hint">Kurs wird geladen &hellip;</span>
+  </div>
+  <div class="card-body" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <input type="number" id="fx-input" placeholder="USD-Betrag" inputmode="decimal">
+    <button id="fx-swap" title="Richtung wechseln" aria-label="Richtung wechseln" style="padding:9px 13px">&#8646;</button>
+    <div class="fx-result" id="fx-result">&mdash;</div>
+  </div>
 </section>
 
 <!-- ================= RULE CARDS ================= -->

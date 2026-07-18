@@ -96,7 +96,7 @@
   button{font-family:var(--body);font-weight:600;font-size:.78rem;color:var(--ink);
     background:var(--fill);border:1px solid rgba(255,255,255,.05);border-radius:999px;
     padding:8px 15px;cursor:pointer;
-    transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),transform .12s var(--ease)}
+    transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),transform .3s cubic-bezier(.34,1.56,.64,1)}
   button:hover{background:var(--fill2);border-color:rgba(255,255,255,.1)}
   button:active{transform:scale(.97)}
   button:disabled{opacity:.35;cursor:not-allowed;transform:none}
@@ -298,7 +298,9 @@
   .rule-card.hard .rc-tag{color:#FF9C94;background:rgba(255,69,58,.13);border:1px solid rgba(255,69,58,.4)}
   .rule-card.soft .rc-tag{color:var(--gold2);background:rgba(245,183,0,.11);border:1px solid rgba(245,183,0,.4)}
   .rule-card.cut .rc-tag{color:#FFC66B;background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.4)}
-  .rc-body{font-size:.7rem;color:var(--muted);line-height:1.7;padding:10px 16px 14px;flex:1;overflow-wrap:break-word;display:none}
+  .rc-body{font-size:.7rem;color:var(--muted);line-height:1.7;padding:0 16px;flex:1;overflow-wrap:break-word;
+    max-height:0;opacity:0;transform:translateY(-4px);overflow:hidden;visibility:hidden;
+    transition:max-height .5s var(--ease),opacity .35s var(--ease),transform .35s var(--ease),padding .35s var(--ease),visibility 0s .5s}
   .rc-body b{color:var(--ink);font-weight:600}
   .rc-body .hl{color:#FF9C94;font-weight:600}
   .rc-link{margin:0 16px 16px}
@@ -307,7 +309,8 @@
     background:var(--fill);border:none;transition:transform .3s var(--ease),background .18s var(--ease)}
   .rc-chevron:hover{background:var(--fill2);color:var(--ink)}
   .rule-card.open .rc-chevron{transform:rotate(180deg)}
-  .rule-card.open .rc-body{display:block}
+  .rule-card.open .rc-body{max-height:360px;opacity:1;transform:none;visibility:visible;padding:10px 16px 14px;
+    transition:max-height .5s var(--ease),opacity .4s var(--ease) .08s,transform .4s var(--ease) .08s,padding .35s var(--ease),visibility 0s}
   .rules-note{font-size:.68rem;color:var(--muted);line-height:1.7;margin:0 20px 20px;overflow-wrap:break-word}
   .rules-note b{color:#FF9C94}
   /* ---------- REGEL-RADAR ---------- */
@@ -342,8 +345,10 @@
   .mk-days{font-family:var(--mono);font-weight:700;font-size:.98rem;color:var(--ink);white-space:nowrap}
   .mk-strip.soon .mk-days{color:#FFC66B}
   .mk-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .mk-list{display:none;flex-direction:column;gap:6px;padding:0 18px 16px}
-  .mk-list.open{display:flex}
+  .mk-list{display:flex;flex-direction:column;gap:6px;padding:0 18px;max-height:0;opacity:0;overflow:hidden;visibility:hidden;
+    transition:max-height .55s var(--ease),opacity .4s var(--ease),padding .4s var(--ease),visibility 0s .55s}
+  .mk-list.open{max-height:900px;opacity:1;visibility:visible;padding:0 18px 16px;
+    transition:max-height .55s var(--ease),opacity .45s var(--ease) .06s,padding .4s var(--ease),visibility 0s}
   .mk-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 12px;border-radius:var(--r-sm);
     background:var(--glass);border:1px solid var(--stroke);font-size:.74rem}
   .mk-row .mk-date{font-family:var(--mono);font-weight:600;color:var(--gold2);min-width:92px}
@@ -361,6 +366,25 @@
     font-size:.68rem;color:var(--muted);line-height:1.8;
     display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
   .xlinks{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ---------- INTERAKTIVE EFFEKTE ----------
+     Werden per JS aktiviert (html.seg-fx / html.rv-fx / .spot-Klassen).
+     Läuft das JS nicht, greifen die statischen Fallback-Styles oben. */
+  .filters,.ff-myfx-tabs{position:relative}
+  .filters button,.fm-tab{position:relative;z-index:1}
+  .seg-glider{position:absolute;top:0;left:0;z-index:0;border-radius:8px;background:rgba(255,255,255,.13);
+    box-shadow:0 1px 4px rgba(0,0,0,.4);opacity:0;pointer-events:none;will-change:transform,width}
+  .seg-glider.on{transition:transform .4s cubic-bezier(.3,1.25,.35,1),width .4s cubic-bezier(.3,1.25,.35,1),height .25s var(--ease),opacity .25s var(--ease)}
+  html.seg-fx .filters button.active,html.seg-fx .fm-tab.active{background:transparent;box-shadow:none}
+  @media (hover:hover) and (pointer:fine){
+    .spot{position:relative}
+    .spot::after{content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;z-index:1;pointer-events:none;
+      background:radial-gradient(560px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.05),transparent 45%);
+      transition:opacity .35s var(--ease)}
+    .spot:hover::after{opacity:1}
+  }
+  html.rv-fx .rv{animation:none;opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  html.rv-fx .rv.vis{opacity:1;transform:none}
 
   @media(max-width:640px){
     .card-head{padding:13px 14px}
@@ -1363,6 +1387,92 @@ loadFeed(false);
 setInterval(tick, 1000);
 setInterval(() => { renderEvents(); renderNextEvent(); }, 60_000);
 setInterval(() => loadFeed(false), AUTO_REFRESH_MS);
+
+/* =====================================================================
+   INTERAKTIVE EFFEKTE — rein kosmetisch, von der App-Logik entkoppelt.
+   Jeder Block ist einzeln try/catch-gekapselt: fällt einer aus, läuft
+   der Rest des Dashboards unverändert weiter.
+===================================================================== */
+
+/* Segmented Controls: aktives Segment gleitet als Pill zwischen den Buttons */
+(function(){
+  try{
+    const groups = Array.from(document.querySelectorAll(".filters, .ff-myfx-tabs"));
+    if(!groups.length) return;
+    groups.forEach(g => {
+      const glide = document.createElement("span");
+      glide.className = "seg-glider";
+      glide.setAttribute("aria-hidden", "true");
+      g.prepend(glide);
+      const place = () => {
+        const a = g.querySelector("button.active");
+        if(!a){ glide.style.opacity = "0"; return; }
+        glide.style.opacity = "1";
+        glide.style.width  = a.offsetWidth + "px";
+        glide.style.height = a.offsetHeight + "px";
+        glide.style.transform = "translate(" + a.offsetLeft + "px," + a.offsetTop + "px)";
+      };
+      g._placeGlider = place;
+      /* Klick zuerst die bestehenden Filter-Listener durchlaufen lassen (bubbling),
+         dann im nächsten Frame die neue .active-Position übernehmen */
+      g.addEventListener("click", () => requestAnimationFrame(place));
+      place();
+      requestAnimationFrame(() => glide.classList.add("on"));
+    });
+    document.documentElement.classList.add("seg-fx");
+    const placeAll = () => groups.forEach(g => g._placeGlider());
+    window.addEventListener("resize", placeAll);
+    window.addEventListener("load", placeAll);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(placeAll);
+  }catch(e){}
+})();
+
+/* Spotlight: dezenter Lichtkegel folgt dem Cursor über Karten (nur Maus-Geräte) */
+(function(){
+  try{
+    if(!window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+    document.querySelectorAll(".card, .rule-card, header").forEach(el => el.classList.add("spot"));
+    let raf = 0, lastEv = null;
+    document.addEventListener("pointermove", (e) => {
+      lastEv = e;
+      if(raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        /* verschachtelte .spot-Ebenen (rule-card in card) alle mitführen,
+           sonst bleibt der Kegel der äußeren Karte auf der letzten Position stehen */
+        let el = lastEv.target && lastEv.target.closest ? lastEv.target.closest(".spot") : null;
+        while(el){
+          const r = el.getBoundingClientRect();
+          el.style.setProperty("--mx", (lastEv.clientX - r.left) + "px");
+          el.style.setProperty("--my", (lastEv.clientY - r.top) + "px");
+          el = el.parentElement && el.parentElement.closest(".spot");
+        }
+      });
+    }, {passive:true});
+  }catch(e){}
+})();
+
+/* Scroll-Reveal: Sektionen faden erst ein, wenn sie ins Viewport kommen */
+(function(){
+  try{
+    if(!("IntersectionObserver" in window)) return;
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t0 = performance.now();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if(!en.isIntersecting) return;
+        const el = en.target;
+        /* Initial sichtbare Elemente behalten ihre gestaffelten Markup-Delays,
+           später reingescrollte erscheinen sofort */
+        el.style.transitionDelay = (performance.now() - t0 < 800) ? (el.style.animationDelay || "0s") : "0s";
+        el.classList.add("vis");
+        io.unobserve(el);
+      });
+    }, {threshold:.06, rootMargin:"0px 0px -4% 0px"});
+    document.querySelectorAll(".rv").forEach(el => io.observe(el));
+    document.documentElement.classList.add("rv-fx");
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

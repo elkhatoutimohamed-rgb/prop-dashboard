@@ -808,6 +808,11 @@ const FEED_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json";
 const TZ = "Europe/Berlin";
 const REFRESH_COOLDOWN_MS = 60_000;
 const AUTO_REFRESH_MS = 30 * 60_000;
+/* Die "thisweek"-Feed-Datei sollte nie mehr als ein paar Tage alt sein (rollt jede Woche).
+   Länger als das deutet auf einen hängenden Cache/Snapshot hin (z.B. wenn der FF-Feed-Host
+   Anfragen von Cloud-IPs — auch die des GitHub-Actions-Cronjobs — mit 429 rate-limited und
+   nur ein alter Snapshot übrig bleibt) — dann als veraltet flaggen statt stillschweigend als "Live"/"Update" zu zeigen. */
+const STALE_AFTER_MS = 4 * 24 * 3600_000;
 
 const FALLBACK_EVENTS = [
   {title:"ISM Services PMI",      country:"USD", date:"07-06-2026", time:"2:00pm",  impact:"High",   forecast:"54.2",  previous:"54.5"},
@@ -846,6 +851,7 @@ const fmtTimeDE  = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,hour:"2-digit",m
 const fmtClockDE = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"});
 const fmtNYshort = new Intl.DateTimeFormat("de-DE",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit"});
 const fmtDayDE   = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,weekday:"long",day:"2-digit",month:"2-digit"});
+const fmtDayShortDE = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,weekday:"short",day:"2-digit",month:"2-digit"});
 const fmtFullDE  = new Intl.DateTimeFormat("de-DE",{timeZone:TZ,weekday:"short",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
 const pad = n => String(n).padStart(2,"0");
 function fmtCountdown(ms){
@@ -972,9 +978,21 @@ async function loadFeed(manual){
     events = parsed;
     usingFallback = false;
     const nowStr = fmtTimeDE.format(new Date());
-    setFeedStatus(true, (live ? "Live" : "Update") + " · " + nowStr,
-      live ? ("FF Live, Stand " + nowStr) : ("FF Update (Auto-Snapshot alle ~20 Min), Stand " + nowStr));
-    document.getElementById("offline-banner").style.display = "none";
+    /* Neuestes Event im Feed weit in der Vergangenheit? Dann ist das ein hängender
+       Snapshot (z.B. Rate-Limit beim FF-Host), keine echte "Live"/"Update"-Antwort — auch
+       wenn das JSON selbst technisch gültig war. */
+    const newestTs = parsed[parsed.length - 1].ts;
+    const stale = (Date.now() - newestTs) > STALE_AFTER_MS;
+    if(stale){
+      const staleStr = fmtFullDE.format(new Date(newestTs));
+      setFeedStatus(false, "Veraltet · " + fmtDayShortDE.format(new Date(newestTs)),
+        "Feed liefert nur noch Daten bis " + staleStr + " Uhr — wirkt seit Tagen hängen geblieben (z.B. Rate-Limit beim FF-Host). Bitte auf ForexFactory direkt gegenchecken.");
+      showBanner("<b>⚠ Kalenderdaten wirken veraltet.</b> Neuestes Event im Feed: <b>" + staleStr + " Uhr</b> — seit Tagen kein frisches Update. Bitte auf ForexFactory direkt gegenchecken, bevor du dich darauf verlässt.");
+    }else{
+      setFeedStatus(true, (live ? "Live" : "Update") + " · " + nowStr,
+        live ? ("FF Live, Stand " + nowStr) : ("FF Update (Auto-Snapshot alle ~20 Min), Stand " + nowStr));
+      hideBanner();
+    }
   }catch(err){
     if(events.length === 0){
       events = FALLBACK_EVENTS.map(parseFeedEvent).filter(e => e && !Number.isNaN(e.ts)).sort((a,b)=>a.ts-b.ts);
@@ -982,7 +1000,9 @@ async function loadFeed(manual){
     }
     setFeedStatus(false, usingFallback ? "Fallback" : "Cache",
       usingFallback ? "Beispieldaten — kein Feed erreichbar" : "Letzter erfolgreicher Abruf — Feed aktuell nicht erreichbar");
-    document.getElementById("offline-banner").style.display = "block";
+    showBanner(usingFallback
+      ? "<b>⚠ Fallback-Daten — Feed nicht erreichbar.</b> Kalender nicht aktuell, vor Trades manuell prüfen."
+      : "<b>⚠ Feed nicht erreichbar.</b> Zeige letzten erfolgreichen Abruf aus dem Cache — Kalender kann veraltet sein.");
   }finally{
     mergeManualEvents();
     renderEvents();
@@ -1002,6 +1022,14 @@ function setFeedStatus(ok, label, detail){
     pill.title = detail + " — antippen zum Neu laden";
   }
   document.getElementById("feed-status").textContent = label;
+}
+function showBanner(html){
+  const b = document.getElementById("offline-banner");
+  b.innerHTML = html;
+  b.style.display = "block";
+}
+function hideBanner(){
+  document.getElementById("offline-banner").style.display = "none";
 }
 
 /* ---------- Myfxbook-Override: Events, die FF orange führt, Myfxbook aber rot ---------- */

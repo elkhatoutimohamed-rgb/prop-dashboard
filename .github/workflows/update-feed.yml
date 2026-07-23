@@ -16,13 +16,26 @@ jobs:
 
       - name: Fetch ForexFactory calendar feed
         run: |
-          curl -sf "https://nfs.faireconomy.media/ff_calendar_thisweek.json" -o feed-cache.json.new
-          # Nur übernehmen wenn gültiges, nicht-leeres JSON-Array — sonst alten Snapshot behalten
-          if [ -s feed-cache.json.new ] && node -e "const d=require('./feed-cache.json.new'); process.exit(Array.isArray(d) && d.length ? 0 : 1)"; then
-            mv feed-cache.json.new feed-cache.json
-          else
-            echo "Feed ungültig/leer — behalte vorherigen Snapshot"
+          # FF-Host antwortet bei Rate-Limiting mit HTTP 200 + einer HTML-Seite statt JSON
+          # (curl -f allein greift da nicht, da der Statuscode "erfolgreich" ist) — deshalb
+          # zusätzlich die Node-Validierung unten. 3 Versuche mit Backoff für kurze Aussetzer;
+          # hält der Block länger an (z.B. IP-Rate-Limit gegen Cloud-Runner-Ranges), schlägt
+          # der Step sichtbar fehl statt das als Erfolg zu maskieren.
+          ok=false
+          for attempt in 1 2 3; do
+            curl -sf "https://nfs.faireconomy.media/ff_calendar_thisweek.json?_cb=$(date +%s)-$attempt" -o feed-cache.json.new || true
+            if [ -s feed-cache.json.new ] && node -e "const d=require('./feed-cache.json.new'); process.exit(Array.isArray(d) && d.length ? 0 : 1)"; then
+              mv feed-cache.json.new feed-cache.json
+              ok=true
+              break
+            fi
+            echo "Versuch $attempt: Feed ungültig/leer (evtl. Rate-Limit) — behalte vorherigen Snapshot"
             rm -f feed-cache.json.new
+            [ "$attempt" != "3" ] && sleep 15
+          done
+          if [ "$ok" != "true" ]; then
+            echo "::warning::FF-Feed lieferte 3x in Folge kein gültiges JSON (vermutlich Rate-Limit beim Host) — feed-cache.json bleibt auf dem letzten erfolgreichen Stand"
+            exit 1
           fi
 
       - name: Commit if changed

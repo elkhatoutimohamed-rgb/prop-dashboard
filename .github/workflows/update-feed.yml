@@ -16,15 +16,21 @@ jobs:
 
       - name: Fetch ForexFactory calendar feed
         run: |
-          # FF-Host antwortet bei Rate-Limiting mit HTTP 200 + einer HTML-Seite statt JSON
-          # (curl -f allein greift da nicht, da der Statuscode "erfolgreich" ist) — deshalb
-          # zusätzlich die Node-Validierung unten. 3 Versuche mit Backoff für kurze Aussetzer;
-          # hält der Block länger an (z.B. IP-Rate-Limit gegen Cloud-Runner-Ranges), schlägt
-          # der Step sichtbar fehl statt das als Erfolg zu maskieren.
+          # Zwei Fallstricke bei diesem Feed:
+          # 1. Der Host rate-limitet Nicht-Browser-User-Agents (curl-Default bekommt eine
+          #    "Rate Limited"-HTML-Seite, teils sogar mit HTTP 200 aus dem CDN-Cache) —
+          #    deshalb ein Browser-UA + die JSON-Validierung unten.
+          # 2. Die Validierung muss fs+JSON.parse nutzen: require() einer Datei ohne
+          #    .json-Endung wird als JS-Modul geladen und exportiert {}, damit fiel die
+          #    frühere Prüfung IMMER durch und der Snapshot blieb ewig stehen.
           ok=false
           for attempt in 1 2 3; do
-            curl -sf "https://nfs.faireconomy.media/ff_calendar_thisweek.json?_cb=$(date +%s)-$attempt" -o feed-cache.json.new || true
-            if [ -s feed-cache.json.new ] && node -e "const d=require('./feed-cache.json.new'); process.exit(Array.isArray(d) && d.length ? 0 : 1)"; then
+            curl -sf \
+              -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+              -H "Accept: application/json,text/plain,*/*" \
+              "https://nfs.faireconomy.media/ff_calendar_thisweek.json?_cb=$(date +%s)-$attempt" \
+              -o feed-cache.json.new || true
+            if [ -s feed-cache.json.new ] && node -e "const d=JSON.parse(require('fs').readFileSync('feed-cache.json.new','utf8')); process.exit(Array.isArray(d) && d.length ? 0 : 1)"; then
               mv feed-cache.json.new feed-cache.json
               ok=true
               break

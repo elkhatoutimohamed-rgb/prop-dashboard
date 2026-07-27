@@ -185,8 +185,8 @@
     background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(18px)}
   .price-strip .tradingview-widget-container{min-height:64px}
   .banner{display:none;margin-bottom:26px;padding:14px 20px;border-radius:var(--r-md);
-    background:linear-gradient(135deg,rgba(255,159,28,.14),rgba(255,159,28,.05));
-    border:1px solid rgba(255,159,28,.4);color:#FFC66B;font-size:.78rem;line-height:1.65}
+    background:linear-gradient(135deg,rgba(255,159,10,.14),rgba(255,159,10,.05));
+    border:1px solid rgba(255,159,10,.4);color:#FFC66B;font-size:.78rem;line-height:1.65}
   .banner b{color:var(--ink)}
 
   /* ---------- CHART ---------- */
@@ -267,17 +267,13 @@
   .empty{font-size:.78rem;color:var(--muted);padding:8px 0}
 
   /* ---------- IFRAME-PANELS ---------- */
+  /* background:#fff — der Payout-Junction-Iframe (nur Electron) rendert hell,
+     das Myfxbook-Panel überschreibt es unten auf transparent */
   .frame-wrap{margin:18px;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--stroke);background:#fff}
-  #myfx-frame{background:#0F0F14;transition:background .3s}
+  .frame-wrap iframe{display:block;width:100%;border:0}
+  #myfx-frame{background:transparent;transition:background .3s}
   #myfx-frame iframe{transition:filter .3s}
   .myfx-dark iframe{filter:invert(0.92) hue-rotate(180deg) contrast(0.92) brightness(1.05)}
-  .frame-fallback{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));color:var(--muted);
-    min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    padding:40px 30px;font-size:.82rem;line-height:1.7}
-  .frame-fallback b{color:var(--ink);font-size:.92rem}
-  .frame-wrap.dark{background:#0B0B10}
-  .frame-wrap iframe{display:block;width:100%;border:0}
-  #myfx-frame{background:transparent;padding:0;min-height:auto;max-height:none}
   .panel-note{font-size:.68rem;color:var(--muted);padding:0 22px 18px;line-height:1.7}
   .panel-note b{color:var(--warn)}
 
@@ -309,12 +305,18 @@
     background:var(--fill);border:none;transition:transform .3s var(--ease),background .18s var(--ease)}
   .rc-chevron:hover{background:var(--fill2);color:var(--ink)}
   .rule-card.open .rc-chevron{transform:rotate(180deg)}
-  .rule-card.open .rc-body{max-height:360px;opacity:1;transform:none;visibility:visible;padding:10px 16px 14px;
+  /* max-height großzügig über der realen Texthöhe halten — sonst werden lange
+     Regeltexte (z.B. ACG) still abgeschnitten, was hier sicherheitsrelevant wäre */
+  .rule-card.open .rc-body{max-height:560px;opacity:1;transform:none;visibility:visible;padding:10px 16px 14px;
     transition:max-height .5s var(--ease),opacity .4s var(--ease) .08s,transform .4s var(--ease) .08s,padding .35s var(--ease),visibility 0s}
   .rules-note{font-size:.68rem;color:var(--muted);line-height:1.7;margin:0 20px 20px;overflow-wrap:break-word}
   .rules-note b{color:#FF9C94}
   /* ---------- REGEL-RADAR ---------- */
-  .radar-scroll{padding:8px 20px 6px;overflow-x:auto}
+  .radar-scroll{padding:8px 20px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* Die Tabelle hat min-width 660px und scrollt auf dem Handy horizontal —
+     ohne Hinweis übersieht man die hinteren Spalten (u.a. Risk/Trade) */
+  .scroll-hint{display:none}
+  @media(max-width:900px){ .scroll-hint{display:inline;color:var(--gold2)} }
   .radar-table{width:100%;border-collapse:collapse;font-size:.78rem;min-width:660px}
   .radar-table th{font-size:.56rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
     text-align:left;padding:6px 12px 9px;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -338,7 +340,7 @@
   .mk-dropdown-btn{padding:0;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:.9rem;line-height:1}
   .mk-chevron{display:inline-block;transition:transform .25s var(--ease)}
   .mk-dropdown-btn.open .mk-chevron{transform:rotate(180deg)}
-  .mk-strip.soon{border-color:rgba(255,159,28,.5);background:linear-gradient(90deg,rgba(255,159,28,.12),rgba(255,255,255,.02))}
+  .mk-strip.soon{border-color:rgba(255,159,10,.5);background:linear-gradient(90deg,rgba(255,159,10,.12),rgba(255,255,255,.02))}
   .mk-main-info{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .mk-label{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
   .mk-strip.soon .mk-label{color:#FFC66B}
@@ -356,7 +358,7 @@
   .mk-row .mk-note{font-size:.64rem;color:var(--muted)}
   .mk-tag{font-size:.58rem;font-weight:700;letter-spacing:.05em;padding:3px 9px;border-radius:999px;white-space:nowrap}
   .mk-tag.closed{color:#FF9C94;background:rgba(255,69,58,.14);border:1px solid rgba(255,69,58,.4)}
-  .mk-tag.early{color:#FFC66B;background:rgba(255,159,28,.13);border:1px solid rgba(255,159,28,.4)}
+  .mk-tag.early{color:#FFC66B;background:rgba(255,159,10,.13);border:1px solid rgba(255,159,10,.4)}
   /* ---------- WÄHRUNGSRECHNER ---------- */
   #fx-input{flex:1;min-width:160px;background:var(--fill);border:1px solid rgba(255,255,255,.05);border-radius:11px;
     color:var(--ink);font-family:var(--mono);font-size:1rem;padding:11px 14px}
@@ -686,7 +688,9 @@
 
   </div>
   <div class="rules-note">
-    <b>FTMO ist die einzige Hard-Breach-Falle</b> — ein SL/TP, der im ±2-Fenster auslöst, killt den Account.
+    <b>Bei News ist FTMO die einzige Hard-Breach-Falle</b> — ein SL/TP, der im ±2-Fenster auslöst, killt den Account.
+    Bei allen anderen kostet ein News-Verstoß nur den Profit, nicht das Konto.
+    <b>Aber:</b> ACG hat außerhalb der News-Regel eine eigene Hard-Breach-Falle (Max-Risk-Rule, siehe Regel-Radar unten).
     Fenster gelten für Instrumente der betroffenen Währung — für GOLD &amp; US30 sind das USD-Events.
     Stand: 27.07.2026 — vor Positionierung offizielle FAQ gegenchecken.
   </div>
@@ -696,7 +700,7 @@
 <section class="card rv" id="radar-card" style="animation-delay:.5s">
   <div class="card-head">
     <h2><span class="dot"></span>Regel-Radar &middot; Konto-Limits</h2>
-    <span class="hint">Funded / Master &middot; Stand 27.07.2026</span>
+    <span class="hint">Funded / Master &middot; Stand 27.07.2026<span class="scroll-hint"> &middot; horizontal wischen f&uuml;r alle Spalten</span></span>
   </div>
 
   <div class="radar-scroll">

@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A personal trading dashboard ("Prop Dashboard by Flenkenz") shipped two ways from **one file**:
-- as a Windows desktop app via Electron (`main.js` + `index.html`)
-- as a PWA hosted on GitHub Pages at https://elkhatoutimohamed-rgb.github.io/prop-dashboard/ (same `index.html`, plus `manifest.json` + `icons/`)
+- as a PWA hosted on GitHub Pages at https://elkhatoutimohamed-rgb.github.io/prop-dashboard/ (same `index.html`, plus `manifest.json` + `icons/`) — **this is the only surface actually in use** (browser on PC, Safari bookmark on the user's phone)
+- as a Windows desktop app via Electron (`main.js` + `index.html`) — **frozen as of 2026-07-31**: the user confirmed they don't plan to use the desktop app anymore. It stays in the repo and working, but don't invest effort in it (no feature work, no proactive Electron upgrades, no desktop-specific testing) unless the user explicitly asks. Electron-only concerns (header stripping, child windows, always-on-top) matter only if this ever gets revived.
 
 `index.html` is the entire application: inline `<style>` and a single inline `<script>` at the bottom containing all logic. There is no bundler, no build step, no framework, no test suite — it's plain HTML/CSS/JS edited directly. Keep it that way; don't introduce a build pipeline unless asked.
 
@@ -26,7 +26,7 @@ A personal trading dashboard ("Prop Dashboard by Flenkenz") shipped two ways fro
 
 **Electron was upgraded 35.7.5 → 43.2.0 and electron-builder 25 → 26.15.3 on 2026-07-31.** Verified: `npm start` clean, PJ iframe + Myfxbook widget + feed pill confirmed working by the user in the running app, `npm run dist` builds the portable exe successfully.
 
-- All Electron security advisories are resolved. What `npm audit` still reports (~16 high) is **exclusively electron-builder's transitive build-time deps** (`@electron/asar`/`ejs`/`jake`/`glob`/`minimatch` chain) with no upstream fix released yet. Build tooling only — never reaches a user; the PWA ships no npm code at all. Don't chase these; recheck after future `electron-builder` releases.
+- All Electron security advisories are resolved. What `npm audit` still reports (~16 high) is **exclusively electron-builder's transitive build-time deps** (`@electron/asar`/`ejs`/`jake`/`glob`/`minimatch` chain) with no upstream fix released yet. Build tooling only — never reaches a user; the PWA ships no npm code at all. Don't chase these — and since the desktop app is frozen (see top), don't proactively bump Electron anymore either.
 - The only code change the 35→43 jump required: the `console-message` handler in `main.js` (Electron 32+ passes an event object; `level` is now a string). The header-stripping (`onHeadersReceived`), `setWindowOpenHandler`, and user-agent Electron detection all survived unchanged.
 - Since Electron 42, the binary downloads **on first run** instead of at `npm install` — a fresh clone's first `npm start` needs network and takes a moment longer. Not a bug.
 

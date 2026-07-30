@@ -22,14 +22,13 @@ A personal trading dashboard ("Prop Dashboard by Flenkenz") shipped two ways fro
 - **`npm start` can crash with `Cannot read properties of undefined (reading 'setAppUserModelId')`** if `ELECTRON_RUN_AS_NODE=1` is set in the shell (it leaks in from VS Code's own Electron-based process tree sometimes). Fix: `unset ELECTRON_RUN_AS_NODE` before running `npm start` in Bash, or launch a fresh terminal.
 - To catch renderer-side JS errors (not just main-process crashes), main.js forwards `console-message` events (level ≥ warning) from the renderer to the terminal — watch that output after `npm start`, since a broken renderer script otherwise fails silently in the window.
 
-## Dependency / `npm audit` status (assessed 2026-07-31)
+## Dependency / `npm audit` status (updated 2026-07-31)
 
-`npm install` reports ~29 advisories (28 high, 1 critical). Assessed once — don't re-panic about the number:
+**Electron was upgraded 35.7.5 → 43.2.0 and electron-builder 25 → 26.15.3 on 2026-07-31.** Verified: `npm start` clean, PJ iframe + Myfxbook widget + feed pill confirmed working by the user in the running app, `npm run dist` builds the portable exe successfully.
 
-- **The PWA is unaffected entirely.** `index.html` ships no npm code; there are zero runtime dependencies, only `electron` and `electron-builder` as devDependencies.
-- **All non-Electron advisories are build tooling only** (`tar`, `brace-expansion` → `minimatch` → `glob` → `rimraf`, the `electron-builder` chain). They run at build/install time, never reach a user. The `electron-updater` credential-leak advisory doesn't apply either — the app doesn't use it and there's no publish config with tokens.
-- **The Electron advisories are the only ones that touch shipped code.** Installed is 35.7.5; fixes land in 39.8.5+, and `npm audit fix` wants 43.2.0 — a **major** bump. Mostly moderate/low, several use-after-free highs. Relevant-but-not-urgent here because the app embeds third-party iframes (Payout Junction, Myfxbook) and `main.js` strips `X-Frame-Options`/`frame-ancestors` session-wide, so third-party content does run in the renderer.
-- **Do not run `npm audit fix --force` casually** — jumping Electron 35 → 43 across 8 major versions risks breaking the header-stripping logic and the iframe embedding, and that needs a real `npm start` test pass before shipping a build.
+- All Electron security advisories are resolved. What `npm audit` still reports (~16 high) is **exclusively electron-builder's transitive build-time deps** (`@electron/asar`/`ejs`/`jake`/`glob`/`minimatch` chain) with no upstream fix released yet. Build tooling only — never reaches a user; the PWA ships no npm code at all. Don't chase these; recheck after future `electron-builder` releases.
+- The only code change the 35→43 jump required: the `console-message` handler in `main.js` (Electron 32+ passes an event object; `level` is now a string). The header-stripping (`onHeadersReceived`), `setWindowOpenHandler`, and user-agent Electron detection all survived unchanged.
+- Since Electron 42, the binary downloads **on first run** instead of at `npm install` — a fresh clone's first `npm start` needs network and takes a moment longer. Not a bug.
 
 ## Deployment model
 

@@ -51,8 +51,11 @@ function createWindow() {
   win.loadFile(path.join(__dirname, "index.html"));
 
   // Renderer-Konsole (inkl. JS-Fehler) im Terminal sichtbar machen, hilfreich beim Entwickeln
-  win.webContents.on("console-message", (e, level, message, line, sourceId) => {
-    if (level >= 2) console.log("[renderer]", message, "(" + sourceId + ":" + line + ")");
+  // (Electron 32+: Event-Objekt statt Positionsargumente, level ist ein String)
+  win.webContents.on("console-message", (ev) => {
+    if (ev.level === "warning" || ev.level === "error") {
+      console.log("[renderer]", ev.message, "(" + ev.sourceId + ":" + ev.lineNumber + ")");
+    }
   });
 
   // FF-Fenster / Myfxbook-Fenster / PJ-Fenster als Kind-Fenster,

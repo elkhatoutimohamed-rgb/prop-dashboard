@@ -22,6 +22,15 @@ A personal trading dashboard ("Prop Dashboard by Flenkenz") shipped two ways fro
 - **`npm start` can crash with `Cannot read properties of undefined (reading 'setAppUserModelId')`** if `ELECTRON_RUN_AS_NODE=1` is set in the shell (it leaks in from VS Code's own Electron-based process tree sometimes). Fix: `unset ELECTRON_RUN_AS_NODE` before running `npm start` in Bash, or launch a fresh terminal.
 - To catch renderer-side JS errors (not just main-process crashes), main.js forwards `console-message` events (level ≥ warning) from the renderer to the terminal — watch that output after `npm start`, since a broken renderer script otherwise fails silently in the window.
 
+## Dependency / `npm audit` status (assessed 2026-07-31)
+
+`npm install` reports ~29 advisories (28 high, 1 critical). Assessed once — don't re-panic about the number:
+
+- **The PWA is unaffected entirely.** `index.html` ships no npm code; there are zero runtime dependencies, only `electron` and `electron-builder` as devDependencies.
+- **All non-Electron advisories are build tooling only** (`tar`, `brace-expansion` → `minimatch` → `glob` → `rimraf`, the `electron-builder` chain). They run at build/install time, never reach a user. The `electron-updater` credential-leak advisory doesn't apply either — the app doesn't use it and there's no publish config with tokens.
+- **The Electron advisories are the only ones that touch shipped code.** Installed is 35.7.5; fixes land in 39.8.5+, and `npm audit fix` wants 43.2.0 — a **major** bump. Mostly moderate/low, several use-after-free highs. Relevant-but-not-urgent here because the app embeds third-party iframes (Payout Junction, Myfxbook) and `main.js` strips `X-Frame-Options`/`frame-ancestors` session-wide, so third-party content does run in the renderer.
+- **Do not run `npm audit fix --force` casually** — jumping Electron 35 → 43 across 8 major versions risks breaking the header-stripping logic and the iframe embedding, and that needs a real `npm start` test pass before shipping a build.
+
 ## Deployment model
 
 Both surfaces are driven by the same `master` branch:

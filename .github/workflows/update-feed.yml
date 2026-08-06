@@ -2,7 +2,10 @@ name: Update FF feed cache
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    # Alle 30 Min — gleiche Taktung wie AUTO_REFRESH_MS im Client. Häufiger zu
+    # pollen bringt nichts, weil die App den Cache ohnehin nur alle 30 Min liest;
+    # der FF-Feed selbst ändert sich real nur ein paar Mal am Tag.
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:

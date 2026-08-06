@@ -957,7 +957,7 @@ function renderSessions(nowDate){
 /* Der FF-Feed-Server schickt keine CORS-Header — im Browser/PWA blockt das jeden
    direkten fetch() (Electron über file:// ist davon nicht betroffen). Deshalb:
    1) direkter Live-Fetch versuchen, 2) same-origin Snapshot versuchen (wird von
-   einer GitHub Action alle ~20 Min aus dem Feed aktualisiert, kein CORS-Problem
+   einer GitHub Action alle ~30 Min aus dem Feed aktualisiert, kein CORS-Problem
    da gleiche Origin), 3) zuletzt erfolgreich geladene bzw. hart codierte Events. */
 async function fetchFeedJson(url){
   try{
@@ -998,7 +998,7 @@ async function loadFeed(manual){
       showBanner("<b>⚠ Kalenderdaten wirken veraltet.</b> Neuestes Event im Feed: <b>" + staleStr + " Uhr</b> — seit Tagen kein frisches Update. Bitte auf ForexFactory direkt gegenchecken, bevor du dich darauf verlässt.");
     }else{
       setFeedStatus(true, (live ? "Live" : "Update") + " · " + nowStr,
-        live ? ("FF Live, Stand " + nowStr) : ("FF Update (Auto-Snapshot alle ~20 Min), Stand " + nowStr));
+        live ? ("FF Live, Stand " + nowStr) : ("FF Update (Auto-Snapshot alle ~30 Min), Stand " + nowStr));
       hideBanner();
     }
   }catch(err){

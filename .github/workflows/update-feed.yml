@@ -8,11 +8,25 @@ on:
 permissions:
   contents: write
 
+# Läufe nie parallel fahren: zwei gleichzeitige Jobs pushen sonst auf denselben
+# Branch und einer stirbt im Push. cancel-in-progress bleibt aus, damit ein
+# laufender Abruf nicht abgebrochen wird — der nächste wartet einfach.
+concurrency:
+  group: update-feed
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    # Der Job braucht normal <1 Min. Ohne Limit würde ein hängender Abruf
+    # bis zu 6 Stunden einen Runner blockieren und Folgeläufe stauen.
+    timeout-minutes: 5
     steps:
+      # fetch-depth: 0 — der Retry unten rebased; auf einem flachen Klon
+      # (Default: depth 1) schlägt das fehl. Das Repo ist klein genug dafür.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Fetch ForexFactory calendar feed
         run: |
@@ -49,5 +63,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add feed-cache.json
-          git diff --cached --quiet || git commit -m "Update FF feed cache"
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m "Update FF feed cache"
+          # Zwischenzeitlich gepushte Commits (z.B. eigene Änderungen an index.html)
+          # einholen statt am Push zu scheitern; --rebase hält die Historie linear.
+          for i in 1 2 3; do
+            git push && exit 0
+            git pull --rebase --autostash origin master || true
+          done
+          echo "::error::Push nach 3 Versuchen fehlgeschlagen"
+          exit 1

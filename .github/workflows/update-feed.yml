@@ -69,27 +69,46 @@ jobs:
           # sonntags um — dadurch sah man die Folgewoche immer erst ab Sonntag.
           # Die Kalenderseite rendert /calendar?week=next und legt die Events als
           # window.calendarComponentStates in die Seite; das lesen wir aus.
-          # Schlägt das fehl (z.B. Bot-Schutz gegen Runner-IPs), ist das NICHT fatal:
-          # der Build fällt dann auf Feed + Bestand zurück, also aufs alte Verhalten.
+          #
+          # ForexFactory beantwortet Anfragen von GitHub-Runner-IPs (Azure) allerdings
+          # mit 403 — gemessen, und zwar unabhaengig von Headern: voller Browser-Header-
+          # Satz und vorher geholte Startseiten-Cookies aendern nichts. Es ist ein
+          # IP-Block, kein UA-Filter. Vom heimischen Anschluss aus geht derselbe Abruf.
+          # Deshalb zusaetzlich der Reader-Proxy r.jina.ai, der die Seite von seinen
+          # eigenen IPs holt und das rohe HTML zurueckgibt (x-respond-with: html).
+          # Direkt wird trotzdem zuerst probiert: kostet nur ~0,1s bis zum 403 und
+          # zieht automatisch wieder, falls FF den Block irgendwann aufhebt.
+          #
+          # Schlaegt beides fehl, ist das NICHT fatal: der Build faellt auf Feed +
+          # Bestand zurueck, also aufs alte Ein-Wochen-Verhalten.
+          FF_URL="https://www.forexfactory.com/calendar?week=next"
           ok=false
           for attempt in 1 2 3; do
-            curl -sf --max-time 30 \
-              -H "User-Agent: $UA" \
-              -H "Accept: text/html,application/xhtml+xml" \
-              -H "Accept-Language: en-US,en;q=0.9" \
-              "https://www.forexfactory.com/calendar?week=next" \
-              -o nextweek.html.new || true
-            if [ -s nextweek.html.new ] && grep -q "calendarComponentStates" nextweek.html.new; then
-              mv nextweek.html.new nextweek.html
-              ok=true
-              break
-            fi
-            echo "Versuch $attempt: Kalenderseite ohne verwertbare Daten"
-            rm -f nextweek.html.new
+            for route in direkt proxy; do
+              if [ "$route" = "direkt" ]; then
+                curl -sf --max-time 30 \
+                  -H "User-Agent: $UA" \
+                  -H "Accept: text/html,application/xhtml+xml" \
+                  -H "Accept-Language: en-US,en;q=0.9" \
+                  "$FF_URL" -o nextweek.html.new || true
+              else
+                curl -sf --max-time 45 \
+                  -H "x-respond-with: html" \
+                  "https://r.jina.ai/$FF_URL" -o nextweek.html.new || true
+              fi
+              if [ -s nextweek.html.new ] && grep -q "calendarComponentStates" nextweek.html.new; then
+                mv nextweek.html.new nextweek.html
+                echo "Folgewoche geladen ($route)"
+                ok=true
+                break 2
+              fi
+              echo "Versuch $attempt/$route: keine verwertbaren Daten"
+              rm -f nextweek.html.new
+            done
             [ "$attempt" != "3" ] && sleep 10
           done
           if [ "$ok" != "true" ]; then
-            echo "::warning::Folgewoche nicht abrufbar (Bot-Schutz?) — Horizont kommt diesmal nur aus Feed + Bestand"
+            echo "::warning::Folgewoche nicht abrufbar (weder direkt noch ueber Proxy) — Horizont kommt diesmal nur aus Feed + Bestand"
             rm -f nextweek.html
           fi
         env:

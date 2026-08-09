@@ -94,6 +94,13 @@ function main() {
   const cached = parseJsonArray(readIfPresent(oldCachePath)) || [];
   const days = extractDays(readIfPresent(nextweekPath));
   const scraped = days ? scrapedToFeed(days) : null;
+  if (scraped && scraped.length) {
+    /* Explizit mitloggen: wird die Seite ueber einen Proxy geholt, koennte der
+       die Query (?week=next) verschlucken und still die laufende Woche liefern.
+       Dann stimmt der Zeitraum hier nicht und unten kaemen 0 Events an. */
+    const ts = scraped.map(e => Date.parse(e.date)).filter(t => !Number.isNaN(t));
+    console.log(`  Scrape liefert ${scraped.length} Events, ${new Date(Math.min(...ts)).toISOString().slice(0, 10)} .. ${new Date(Math.max(...ts)).toISOString().slice(0, 10)}`);
+  }
 
   if (!official && !scraped && !cached.length) {
     console.error("Keine einzige Quelle verwertbar — breche ab, alter Cache bleibt stehen.");

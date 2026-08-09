@@ -955,10 +955,16 @@ function renderSessions(nowDate){
 
 /* ---------- Feed ---------- */
 /* Der FF-Feed-Server schickt keine CORS-Header — im Browser/PWA blockt das jeden
-   direkten fetch() (Electron über file:// ist davon nicht betroffen). Deshalb:
-   1) direkter Live-Fetch versuchen, 2) same-origin Snapshot versuchen (wird von
-   einer GitHub Action alle ~30 Min aus dem Feed aktualisiert, kein CORS-Problem
-   da gleiche Origin), 3) zuletzt erfolgreich geladene bzw. hart codierte Events. */
+   direkten fetch() (Electron über file:// ist davon nicht betroffen). Deshalb wird
+   der same-origin Snapshot feed-cache.json von einer GitHub Action alle ~30 Min
+   gepflegt (kein CORS-Problem, da gleiche Origin).
+   Beide Quellen werden zusammengeführt statt nur als Fallback benutzt:
+   - FEED_URL (live) kennt nur die LAUFENDE Woche, hat dafür die frischesten Werte.
+   - feed-cache.json deckt zusätzlich die FOLGEWOCHE ab (die Action liest sie von
+     FF's Kalenderseite, der JSON-Feed selbst gibt sie nicht her).
+   Vorher war der Cache reiner Fallback — dadurch endete die Liste immer am Ende
+   der laufenden Woche und die neue Woche tauchte erst sonntags auf.
+   Greift beides nicht: zuletzt geladene bzw. hart codierte Events. */
 async function fetchFeedJson(url){
   try{
     const res = await fetch(url, {cache:"no-store"});
@@ -977,11 +983,23 @@ async function loadFeed(manual){
   }
   lastFetch = now;
   try{
-    let raw = await fetchFeedJson(FEED_URL);
-    let live = true;
-    if(!raw){ raw = await fetchFeedJson("feed-cache.json"); live = false; }
-    if(!raw) throw new Error("Kein Feed erreichbar");
-    const parsed = raw.map(parseFeedEvent).filter(e => e && !Number.isNaN(e.ts)).sort((a,b) => a.ts - b.ts);
+    const [liveRaw, cacheRaw] = await Promise.all([
+      fetchFeedJson(FEED_URL),
+      fetchFeedJson("feed-cache.json")
+    ]);
+    const live = !!liveRaw;
+    if(!liveRaw && !cacheRaw) throw new Error("Kein Feed erreichbar");
+    /* Cache zuerst, Live danach — bei gleichem Event gewinnt der Live-Stand,
+       weil dort die tatsächlichen Werte (actual/revision) zuerst ankommen. */
+    const byKey = new Map();
+    for(const src of [cacheRaw, liveRaw]){
+      for(const e of src || []){
+        const p = parseFeedEvent(e);
+        if(!p || Number.isNaN(p.ts)) continue;
+        byKey.set(p.ts + "|" + p.country + "|" + p.title, p);
+      }
+    }
+    const parsed = [...byKey.values()].sort((a,b) => a.ts - b.ts);
     if(parsed.length === 0) throw new Error("Feed leer nach Parsing");
     events = parsed;
     usingFallback = false;
@@ -1256,7 +1274,7 @@ function renderEvents(){
   if(list.length === 0){
     wrap.innerHTML = '<p class="empty">Keine Events im Feed für diese Filter'
       + (ccyFilter !== "ALL" ? ' (' + ccyFilter + ')' : '')
-      + '. Der FF-Feed deckt nur die laufende Woche ab (neu ab Sonntag).</p>';
+      + '. Der Kalender deckt die laufende Woche und die Folgewoche ab.</p>';
     return;
   }
   const nextTs = (list.find(e => e.ts > now && effImpact(e) === "High") || {}).ts;

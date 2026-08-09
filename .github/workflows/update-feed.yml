@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch ForexFactory calendar feed
+      - name: Fetch ForexFactory calendar feed (laufende Woche)
         run: |
           # Zwei Fallstricke bei diesem Feed:
           # 1. Der Host rate-limitet Nicht-Browser-User-Agents (curl-Default bekommt eine
@@ -43,23 +43,66 @@ jobs:
           ok=false
           for attempt in 1 2 3; do
             curl -sf \
-              -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+              -H "User-Agent: $UA" \
               -H "Accept: application/json,text/plain,*/*" \
               "https://nfs.faireconomy.media/ff_calendar_thisweek.json?_cb=$(date +%s)-$attempt" \
-              -o feed-cache.json.new || true
-            if [ -s feed-cache.json.new ] && node -e "const d=JSON.parse(require('fs').readFileSync('feed-cache.json.new','utf8')); process.exit(Array.isArray(d) && d.length ? 0 : 1)"; then
-              mv feed-cache.json.new feed-cache.json
+              -o thisweek.json.new || true
+            if [ -s thisweek.json.new ] && node -e "const d=JSON.parse(require('fs').readFileSync('thisweek.json.new','utf8')); process.exit(Array.isArray(d) && d.length ? 0 : 1)"; then
+              mv thisweek.json.new thisweek.json
               ok=true
               break
             fi
-            echo "Versuch $attempt: Feed ungültig/leer (evtl. Rate-Limit) — behalte vorherigen Snapshot"
-            rm -f feed-cache.json.new
+            echo "Versuch $attempt: Feed ungültig/leer (evtl. Rate-Limit)"
+            rm -f thisweek.json.new
             [ "$attempt" != "3" ] && sleep 15
           done
           if [ "$ok" != "true" ]; then
-            echo "::warning::FF-Feed lieferte 3x in Folge kein gültiges JSON (vermutlich Rate-Limit beim Host) — feed-cache.json bleibt auf dem letzten erfolgreichen Stand"
-            exit 1
+            echo "::warning::FF-JSON-Feed lieferte 3x kein gültiges JSON (vermutlich Rate-Limit) — laufende Woche kommt diesmal nur aus dem Bestand"
+            rm -f thisweek.json
           fi
+        env:
+          UA: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+
+      - name: Fetch ForexFactory calendar page (Folgewoche)
+        run: |
+          # Der offizielle JSON-Feed kennt NUR die laufende Woche und springt erst
+          # sonntags um — dadurch sah man die Folgewoche immer erst ab Sonntag.
+          # Die Kalenderseite rendert /calendar?week=next und legt die Events als
+          # window.calendarComponentStates in die Seite; das lesen wir aus.
+          # Schlägt das fehl (z.B. Bot-Schutz gegen Runner-IPs), ist das NICHT fatal:
+          # der Build fällt dann auf Feed + Bestand zurück, also aufs alte Verhalten.
+          ok=false
+          for attempt in 1 2 3; do
+            curl -sf --max-time 30 \
+              -H "User-Agent: $UA" \
+              -H "Accept: text/html,application/xhtml+xml" \
+              -H "Accept-Language: en-US,en;q=0.9" \
+              "https://www.forexfactory.com/calendar?week=next" \
+              -o nextweek.html.new || true
+            if [ -s nextweek.html.new ] && grep -q "calendarComponentStates" nextweek.html.new; then
+              mv nextweek.html.new nextweek.html
+              ok=true
+              break
+            fi
+            echo "Versuch $attempt: Kalenderseite ohne verwertbare Daten"
+            rm -f nextweek.html.new
+            [ "$attempt" != "3" ] && sleep 10
+          done
+          if [ "$ok" != "true" ]; then
+            echo "::warning::Folgewoche nicht abrufbar (Bot-Schutz?) — Horizont kommt diesmal nur aus Feed + Bestand"
+            rm -f nextweek.html
+          fi
+        env:
+          UA: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+
+      - name: Build merged cache
+        run: |
+          node .github/scripts/build-feed-cache.js \
+            "$([ -f thisweek.json ] && echo thisweek.json || echo -)" \
+            "$([ -f nextweek.html ] && echo nextweek.html || echo -)" \
+            "$([ -f feed-cache.json ] && echo feed-cache.json || echo -)" \
+            feed-cache.json
+          rm -f thisweek.json nextweek.html
 
       - name: Commit if changed
         run: |
